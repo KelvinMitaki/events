@@ -9,14 +9,24 @@ export class EventForm extends Component {
     venue: "",
     hostedBy: "",
   };
+  componentDidMount() {
+    if (this.props.selectedEvent) {
+      this.setState({ ...this.props.selectedEvent });
+    }
+  }
   handleChange = (event) => {
     const { name, value } = event.target;
     this.setState({ [name]: value });
   };
   handleSubmit = (event) => {
     event.preventDefault();
-    this.props.createEventOnSubmit(this.state);
+    if (this.state.id) {
+      this.props.updateSelectedEvent(this.state);
+    } else {
+      this.props.createEventOnSubmit(this.state);
+    }
   };
+
   render() {
     const { title, hostedBy, venue, date, city } = this.state;
     return (
