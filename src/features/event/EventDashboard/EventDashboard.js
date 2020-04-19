@@ -59,6 +59,9 @@ export class EventDashboard extends Component {
     events: eventsFromDashboard,
     isOpen: false,
   };
+  onCancelClick = () => {
+    this.setState({ isOpen: false });
+  };
   render() {
     const { events, isOpen } = this.state;
     return (
@@ -68,15 +71,12 @@ export class EventDashboard extends Component {
         </Grid.Column>
         <Grid.Column width={6}>
           <Button
+            disabled={isOpen ? true : false}
             positive
             content="Create Event"
-            onClick={() =>
-              this.setState((prevState) => ({
-                isOpen: !prevState.isOpen,
-              }))
-            }
+            onClick={() => this.setState({ isOpen: true })}
           />
-          {isOpen ? <EventForm /> : null}
+          {isOpen ? <EventForm onCancelClick={this.onCancelClick} /> : null}
         </Grid.Column>
       </Grid>
     );
