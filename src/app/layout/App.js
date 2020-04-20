@@ -23,12 +23,20 @@ export class App extends Component {
               <NavBar />
               <Container className="overlap">
                 <Switch>
-                  <Route path="/events" component={EventDashboard} />
-                  <Route path="/events/:id" component={EventDetailedPage} />
-                  <Route path="/people" component={PeopleDashboard} />
-                  <Route path="/profile/:id" component={UserDetailedPage} />
-                  <Route path="/settings" component={SettingsDashboard} />
-                  <Route path="/createEvent" component={EventForm} />
+                  <Route exact path="/events" component={EventDashboard} />
+                  <Route
+                    exact
+                    path="/events/:id"
+                    component={EventDetailedPage}
+                  />
+                  <Route exact path="/people" component={PeopleDashboard} />
+                  <Route
+                    exact
+                    path="/profile/:id"
+                    component={UserDetailedPage}
+                  />
+                  <Route exact path="/settings" component={SettingsDashboard} />
+                  <Route exact path="/createEvent" component={EventForm} />
                 </Switch>
               </Container>
             </React.Fragment>

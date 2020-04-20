@@ -4,6 +4,7 @@ import EventListAttendee from "./EventListAttendee";
 import { Segment, Item, List, Button, Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { deleteEvent, viewSelectedEvent } from "../../../redux/actions";
+import { Link } from "react-router-dom";
 
 export class EventListItem extends Component {
   render() {
@@ -49,11 +50,11 @@ export class EventListItem extends Component {
             onClick={() => deleteEvent(event.id)}
           />
           <Button
-            as="a"
+            as={Link}
+            to={`/events/${event.id}`}
             color="teal"
             floated="right"
             content="View"
-            onClick={() => viewSelectedEvent(event)}
           />
         </Segment>
       </Segment.Group>
