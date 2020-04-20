@@ -1,14 +1,24 @@
 import React, { Component } from "react";
 import { Menu, Container, Button } from "semantic-ui-react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, withRouter } from "react-router-dom";
+import SignedInMenu from "../menus/SignedInMenu";
+import SignedOutMenu from "../menus/SignedOutMenu";
 
 export class NavBar extends Component {
+  state = {
+    authenticated: false,
+  };
+  onSignInClick = () => this.setState({ authenticated: true });
+  onSignOutClick = () => {
+    this.setState({ authenticated: false });
+    this.props.history.push("/");
+  };
   render() {
     return (
       <Menu inverted fixed="top">
         <Container>
           <Menu.Item as={NavLink} to="/" exact header>
-            <img src="assets/logo.png" alt="logo" />
+            <img src="/assets/logo.png" alt="logo" />
             events
           </Menu.Item>
           <Menu.Item as={NavLink} to="/events" name="Events" />
@@ -23,19 +33,15 @@ export class NavBar extends Component {
               content="Create Event"
             />
           </Menu.Item>
-          <Menu.Item position="right">
-            <Button basic inverted content="Login" />
-            <Button
-              basic
-              inverted
-              content="Sign Out"
-              style={{ marginLeft: "0.5em" }}
-            />
-          </Menu.Item>
+          {this.state.authenticated ? (
+            <SignedInMenu onSignOutClick={this.onSignOutClick} />
+          ) : (
+            <SignedOutMenu onSIgnInClick={this.onSignInClick} />
+          )}
         </Container>
       </Menu>
     );
   }
 }
 
-export default NavBar;
+export default withRouter(NavBar);

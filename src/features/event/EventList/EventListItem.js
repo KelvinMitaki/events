@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import { Segment, Item, List, Button, Icon } from "semantic-ui-react";
 import EventListAttendee from "./EventListAttendee";
+
+import { Segment, Item, List, Button, Icon } from "semantic-ui-react";
+import { connect } from "react-redux";
+import { deleteEvent, viewSelectedEvent } from "../../../redux/actions";
 
 export class EventListItem extends Component {
   render() {
-    const { event, viewSelectedEvent, deleteSelectedEvent } = this.props;
+    const { event, viewSelectedEvent, deleteEvent } = this.props;
 
     return (
       <Segment.Group>
@@ -43,7 +46,7 @@ export class EventListItem extends Component {
             color="red"
             floated="right"
             content="Delete"
-            onClick={() => deleteSelectedEvent(event.id)}
+            onClick={() => deleteEvent(event.id)}
           />
           <Button
             as="a"
@@ -58,4 +61,4 @@ export class EventListItem extends Component {
   }
 }
 
-export default EventListItem;
+export default connect(null, { deleteEvent, viewSelectedEvent })(EventListItem);

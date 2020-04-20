@@ -1,16 +1,25 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import * as serviceWorker from "./serviceWorker";
 import App from "./app/layout/App";
+import reducers from "./redux/reducers";
+
+import * as serviceWorker from "./serviceWorker";
+
 import { BrowserRouter } from "react-router-dom";
+import { createStore, compose } from "redux";
+import { Provider } from "react-redux";
+
+const combineEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const store = createStore(reducers, combineEnhancers());
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider store={store}>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>,
+  </Provider>,
   document.getElementById("root")
 );
 

@@ -1,7 +1,7 @@
 import React from "react";
 
 const BasicPage = () => {
-  return <div></div>;
+  return <div>ssup</div>;
 };
 
 export default BasicPage;

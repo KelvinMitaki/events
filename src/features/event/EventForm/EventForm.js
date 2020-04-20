@@ -1,5 +1,11 @@
 import React, { Component } from "react";
 import { Segment, Form, Button } from "semantic-ui-react";
+import {
+  createEvent,
+  updateEvent,
+  onCancelClick,
+} from "../../../redux/actions";
+import { connect } from "react-redux";
 
 export class EventForm extends Component {
   state = {
@@ -21,9 +27,9 @@ export class EventForm extends Component {
   handleSubmit = (event) => {
     event.preventDefault();
     if (this.state.id) {
-      this.props.updateSelectedEvent(this.state);
+      this.props.updateEvent(this.state);
     } else {
-      this.props.createEventOnSubmit(this.state);
+      this.props.createEvent(this.state);
     }
   };
 
@@ -96,4 +102,14 @@ export class EventForm extends Component {
   }
 }
 
-export default EventForm;
+const mapStateToProps = (state) => {
+  return {
+    selectedEvent: state.eventsReducer.selectedEvent,
+  };
+};
+
+export default connect(mapStateToProps, {
+  createEvent,
+  updateEvent,
+  onCancelClick,
+})(EventForm);
