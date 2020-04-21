@@ -5,6 +5,8 @@ import {
   VIEW_SELECTED_EVENT,
   ON_CANCEL_CLICK,
   CREATE_EVENT_BUTTON,
+  MANAGE_EVENT,
+  CREATE_EVENT_NAVBAR,
 } from "../utils/ActionConstants";
 import { eventsData } from "../EventsData/EventsData";
 import cuid from "cuid";
@@ -41,7 +43,11 @@ export default (state = INITIAL_STATE, action) => {
     case ON_CANCEL_CLICK:
       return { ...state, isOpen: false };
     case CREATE_EVENT_BUTTON:
-      return { ...state, isOpen: true };
+      return { ...state, isOpen: true, selectedEvent: null };
+    case CREATE_EVENT_NAVBAR:
+      return { ...state, selectedEvent: null };
+    case MANAGE_EVENT:
+      return { ...state, selectedEvent: action.payload };
     default:
       return state;
   }

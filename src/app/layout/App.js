@@ -9,7 +9,7 @@ import SettingsDashboard from "../../features/user/settings/SettingsDashboard";
 import EventForm from "../../features/event/EventForm/EventForm";
 
 import { Container } from "semantic-ui-react";
-import { Route, Switch } from "react-router";
+import { Route, Switch, withRouter } from "react-router";
 
 export class App extends Component {
   render() {
@@ -22,7 +22,7 @@ export class App extends Component {
             <React.Fragment>
               <NavBar />
               <Container className="overlap">
-                <Switch>
+                <Switch key={this.props.location.key}>
                   <Route exact path="/events" component={EventDashboard} />
                   <Route
                     exact
@@ -36,7 +36,10 @@ export class App extends Component {
                     component={UserDetailedPage}
                   />
                   <Route exact path="/settings" component={SettingsDashboard} />
-                  <Route exact path="/createEvent" component={EventForm} />
+                  <Route
+                    path={["/createEvent", "/manage/:id"]}
+                    component={EventForm}
+                  />
                 </Switch>
               </Container>
             </React.Fragment>
@@ -47,4 +50,4 @@ export class App extends Component {
   }
 }
 
-export default App;
+export default withRouter(App);

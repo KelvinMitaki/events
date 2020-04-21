@@ -3,12 +3,12 @@ import EventListAttendee from "./EventListAttendee";
 
 import { Segment, Item, List, Button, Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { deleteEvent, viewSelectedEvent } from "../../../redux/actions";
+import { deleteEvent } from "../../../redux/actions";
 import { Link } from "react-router-dom";
 
 export class EventListItem extends Component {
   render() {
-    const { event, viewSelectedEvent, deleteEvent } = this.props;
+    const { event, deleteEvent } = this.props;
 
     return (
       <Segment.Group>
@@ -19,7 +19,7 @@ export class EventListItem extends Component {
               <Item.Content>
                 <Item.Header as="a">{event.title}</Item.Header>
                 <Item.Description>
-                  Hosted by <a>{event.hostedBy}</a>
+                  Hosted by <strong>{event.hostedBy}</strong>
                 </Item.Description>
               </Item.Content>
             </Item>
@@ -62,4 +62,4 @@ export class EventListItem extends Component {
   }
 }
 
-export default connect(null, { deleteEvent, viewSelectedEvent })(EventListItem);
+export default connect(null, { deleteEvent })(EventListItem);

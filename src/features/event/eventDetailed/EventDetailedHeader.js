@@ -2,6 +2,7 @@ import React from "react";
 import { Segment, Image, Header, Item, Button } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
+import { manageEvent } from "../../../redux/actions";
 
 const eventImageStyle = {
   filter: "brightness(30%)",
@@ -15,7 +16,7 @@ const eventImageTextStyle = {
   height: "auto",
   color: "white",
 };
-const EventDetailedHeader = ({ event }) => {
+const EventDetailedHeader = ({ event, manageEvent, history }) => {
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0" }}>
@@ -48,7 +49,14 @@ const EventDetailedHeader = ({ event }) => {
         <Button>Cancel My Place</Button>
         <Button color="teal">JOIN THIS EVENT</Button>
 
-        <Button color="orange" floated="right">
+        <Button
+          color="orange"
+          floated="right"
+          onClick={() => {
+            manageEvent(event);
+            history.push(`/manage/${event.id}`);
+          }}
+        >
           Manage Event
         </Button>
       </Segment>
@@ -57,7 +65,11 @@ const EventDetailedHeader = ({ event }) => {
 };
 const mapStateToProps = (state, ownProps) => {
   return {
-    event: state.eventsReducer.events[ownProps.match.params.id],
+    event: state.eventsReducer.events.find(
+      (event) => event.id === ownProps.match.params.id
+    ),
   };
 };
-export default withRouter(connect(mapStateToProps)(EventDetailedHeader));
+export default withRouter(
+  connect(mapStateToProps, { manageEvent })(EventDetailedHeader)
+);

@@ -3,6 +3,8 @@ import { Menu, Container, Button } from "semantic-ui-react";
 import { NavLink, Link, withRouter } from "react-router-dom";
 import SignedInMenu from "../menus/SignedInMenu";
 import SignedOutMenu from "../menus/SignedOutMenu";
+import { createEventNavbar } from "../../../redux/actions";
+import { connect } from "react-redux";
 
 export class NavBar extends Component {
   state = {
@@ -14,6 +16,7 @@ export class NavBar extends Component {
     this.props.history.push("/");
   };
   render() {
+    const { createEventNavbar } = this.props;
     return (
       <Menu inverted fixed="top">
         <Container>
@@ -22,17 +25,22 @@ export class NavBar extends Component {
             events
           </Menu.Item>
           <Menu.Item as={NavLink} to="/events" exact name="Events" />
-          <Menu.Item as={NavLink} to="/people" name="People" />
-          <Menu.Item>
-            <Button
-              as={Link}
-              to="/createEvent"
-              floated="right"
-              positive
-              inverted
-              content="Create Event"
-            />
-          </Menu.Item>
+          {this.state.authenticated && (
+            <React.Fragment>
+              <Menu.Item as={NavLink} to="/people" name="People" />
+              <Menu.Item>
+                <Button
+                  as={Link}
+                  to="/createEvent"
+                  floated="right"
+                  positive
+                  inverted
+                  content="Create Event"
+                  onClick={() => createEventNavbar()}
+                />
+              </Menu.Item>
+            </React.Fragment>
+          )}
           {this.state.authenticated ? (
             <SignedInMenu onSignOutClick={this.onSignOutClick} />
           ) : (
@@ -44,4 +52,4 @@ export class NavBar extends Component {
   }
 }
 
-export default withRouter(NavBar);
+export default connect(null, { createEventNavbar })(withRouter(NavBar));

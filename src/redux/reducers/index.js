@@ -1,6 +1,17 @@
-import { combineReducers } from "redux";
 import EventsReducer from "./EventsReducer";
+import storage from "redux-persist/lib/storage";
 
-export default combineReducers({
+import { combineReducers } from "redux";
+import { persistReducer } from "redux-persist";
+
+const persistConfig = {
+  key: "root",
+  storage,
+  whitelist: ["eventsReducer"],
+};
+
+const reducers = combineReducers({
   eventsReducer: EventsReducer,
 });
+
+export default persistReducer(persistConfig, reducers);

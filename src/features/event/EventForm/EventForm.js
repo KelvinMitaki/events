@@ -6,6 +6,7 @@ import {
   onCancelClick,
 } from "../../../redux/actions";
 import { connect } from "react-redux";
+import { withRouter } from "react-router";
 
 export class EventForm extends Component {
   state = {
@@ -20,6 +21,7 @@ export class EventForm extends Component {
       this.setState({ ...this.props.selectedEvent });
     }
   }
+
   handleChange = (event) => {
     const { name, value } = event.target;
     this.setState({ [name]: value });
@@ -30,6 +32,9 @@ export class EventForm extends Component {
       this.props.updateEvent(this.state);
     } else {
       this.props.createEvent(this.state);
+    }
+    if (this.props.match.url !== "/events") {
+      this.props.history.push("/events");
     }
   };
 
@@ -93,7 +98,7 @@ export class EventForm extends Component {
           >
             Submit
           </Button>
-          <Button type="button" onClick={this.props.onCancelClick}>
+          <Button type="button" onClick={() => this.props.history.goBack()}>
             Cancel
           </Button>
         </Form>
@@ -108,8 +113,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, {
-  createEvent,
-  updateEvent,
-  onCancelClick,
-})(EventForm);
+export default withRouter(
+  connect(mapStateToProps, {
+    createEvent,
+    updateEvent,
+    onCancelClick,
+  })(EventForm)
+);

@@ -9,6 +9,8 @@ import * as serviceWorker from "./serviceWorker";
 import { BrowserRouter } from "react-router-dom";
 import { createStore, compose } from "redux";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { persistStore } from "redux-persist";
 
 const combineEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -17,7 +19,9 @@ const store = createStore(reducers, combineEnhancers());
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
-      <App />
+      <PersistGate persistor={persistStore(store)}>
+        <App />
+      </PersistGate>
     </BrowserRouter>
   </Provider>,
   document.getElementById("root")

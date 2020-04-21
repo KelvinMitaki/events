@@ -44,7 +44,9 @@ const EventDetailedInfo = ({ event }) => {
 };
 const mapStateToProps = (state, ownProps) => {
   return {
-    event: state.eventsReducer.events[ownProps.match.params.id],
+    event: state.eventsReducer.events.find(
+      (event) => event.id === ownProps.match.params.id
+    ),
   };
 };
 export default withRouter(connect(mapStateToProps)(EventDetailedInfo));

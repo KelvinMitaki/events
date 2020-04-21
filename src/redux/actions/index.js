@@ -5,6 +5,8 @@ import {
   VIEW_SELECTED_EVENT,
   ON_CANCEL_CLICK,
   CREATE_EVENT_BUTTON,
+  MANAGE_EVENT,
+  CREATE_EVENT_NAVBAR,
 } from "../utils/ActionConstants";
 
 export const createEvent = (data) => {
@@ -41,5 +43,18 @@ export const onCancelClick = () => {
 export const createEventButton = () => {
   return {
     type: CREATE_EVENT_BUTTON,
+  };
+};
+
+export const manageEvent = (event) => {
+  return {
+    type: MANAGE_EVENT,
+    payload: event,
+  };
+};
+
+export const createEventNavbar = () => {
+  return {
+    type: CREATE_EVENT_NAVBAR,
   };
 };
