@@ -1,3 +1,7 @@
+import TextInput from "../form/TextInput";
+import TextArea from "../form/TextArea";
+import SelectInput from "../form/SelectInput";
+import cuid from "cuid";
 import React, { Component } from "react";
 import { Segment, Form, Button, Header, Grid } from "semantic-ui-react";
 import {
@@ -8,10 +12,27 @@ import {
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import { reduxForm, Field } from "redux-form";
-import TextInput from "../form/TextInput";
-import TextArea from "../form/TextArea";
-import SelectInput from "../form/SelectInput";
-import cuid from "cuid";
+import {
+  combineValidators,
+  isRequired,
+  composeValidators,
+  hasLengthGreaterThan,
+} from "revalidate";
+import DateInput from "../form/DateInput";
+
+const validate = combineValidators({
+  title: isRequired({ message: "The event title is required" }),
+  category: isRequired({ message: "The category is required" }),
+  description: composeValidators(
+    isRequired({ message: "Please enter a description" }),
+    hasLengthGreaterThan(19)({
+      message: "Description needs to be at least 20 characters",
+    })
+  )(),
+  city: isRequired("city"),
+  venue: isRequired("venue"),
+  date: isRequired("date"),
+});
 
 const category = [
   { key: "drinks", text: "Drinks", value: "drinks" },
@@ -38,6 +59,7 @@ export class EventForm extends Component {
   };
 
   render() {
+    const { invalid, submitting, pristine } = this.props;
     return (
       <Grid>
         <Grid.Column width={10}>
@@ -74,12 +96,18 @@ export class EventForm extends Component {
               />
               <Field
                 name="date"
-                component={TextInput}
+                component={DateInput}
+                dateFormat="dd LLL yyyy h:mm a"
+                showTimeSelect
+                timeFormat="HH:mm"
                 placeholder="Event Date"
-                type="date"
               />
 
-              <Button positive type="submit">
+              <Button
+                disabled={pristine || submitting || invalid}
+                positive
+                type="submit"
+              >
                 Submit
               </Button>
               <Button
@@ -107,6 +135,7 @@ const mapStateToProps = (state) => {
 };
 const formWrapper = reduxForm({
   form: "EventForm",
+  validate,
 })(EventForm);
 
 export default withRouter(

@@ -17,6 +17,30 @@ const eventImageTextStyle = {
   color: "white",
 };
 const EventDetailedHeader = ({ event, manageEvent, history }) => {
+  const test = new Date(event.date);
+  const arr = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "July",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const year = test.getFullYear();
+  const month = arr[test.getMonth()];
+
+  const day = test.getDate();
+  const hour = test.getHours();
+
+  let minutes = test.getMinutes();
+  minutes = minutes === 0 ? "00" : minutes;
+
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0" }}>
@@ -35,7 +59,7 @@ const EventDetailedHeader = ({ event, manageEvent, history }) => {
                   content={event.title}
                   style={{ color: "white" }}
                 />
-                <p>{event.date}</p>
+                <p> {`${day} ${month} ${year} ${hour}:${minutes}`}</p>
                 <p>
                   Hosted by <strong>{event.hostedBy}</strong>
                 </p>

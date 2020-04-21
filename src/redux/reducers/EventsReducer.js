@@ -10,7 +10,6 @@ import {
   CHANGE_OPEN_STATE,
 } from "../utils/ActionConstants";
 import { eventsData } from "../EventsData/EventsData";
-import cuid from "cuid";
 
 const INITIAL_STATE = {
   events: eventsData,
