@@ -10,8 +10,13 @@ import EventForm from "../../features/event/EventForm/EventForm";
 
 import { Container } from "semantic-ui-react";
 import { Route, Switch, withRouter } from "react-router";
+import { changeOpenState } from "../../redux/actions";
+import { connect } from "react-redux";
 
 export class App extends Component {
+  componentDidMount() {
+    this.props.changeOpenState();
+  }
   render() {
     return (
       <React.Fragment>
@@ -50,4 +55,4 @@ export class App extends Component {
   }
 }
 
-export default withRouter(App);
+export default withRouter(connect(null, { changeOpenState })(App));

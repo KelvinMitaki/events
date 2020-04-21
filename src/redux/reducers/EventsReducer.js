@@ -7,6 +7,7 @@ import {
   CREATE_EVENT_BUTTON,
   MANAGE_EVENT,
   CREATE_EVENT_NAVBAR,
+  CHANGE_OPEN_STATE,
 } from "../utils/ActionConstants";
 import { eventsData } from "../EventsData/EventsData";
 import cuid from "cuid";
@@ -20,10 +21,11 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case CREATE_EVENT:
-      const id = cuid();
-      const hostPhotoURL = "/assets/user.png";
-      const fullUser = { id, hostPhotoURL, ...action.payload };
-      return { ...state, events: [fullUser, ...state.events] };
+      return {
+        ...state,
+        events: [action.payload, ...state.events],
+        isOpen: false,
+      };
     case UPDATE_EVENT:
       const result = state.events.map((event) => {
         if (event.id === action.payload.id) {
@@ -48,6 +50,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, selectedEvent: null };
     case MANAGE_EVENT:
       return { ...state, selectedEvent: action.payload };
+    case CHANGE_OPEN_STATE:
+      return { ...state, isOpen: false };
     default:
       return state;
   }

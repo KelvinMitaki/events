@@ -7,6 +7,7 @@ import {
   CREATE_EVENT_BUTTON,
   MANAGE_EVENT,
   CREATE_EVENT_NAVBAR,
+  CHANGE_OPEN_STATE,
 } from "../utils/ActionConstants";
 
 export const createEvent = (data) => {
@@ -56,5 +57,10 @@ export const manageEvent = (event) => {
 export const createEventNavbar = () => {
   return {
     type: CREATE_EVENT_NAVBAR,
+  };
+};
+export const changeOpenState = () => {
+  return {
+    type: CHANGE_OPEN_STATE,
   };
 };

@@ -22,10 +22,7 @@ export class EventDashboard extends Component {
             onClick={() => createEventButton()}
           />
           {isOpen ? (
-            <EventForm
-              key={selectedEvent ? selectedEvent.id : 0}
-              onCancelClick={this.onCancelClick}
-            />
+            <EventForm key={selectedEvent ? selectedEvent.id : 0} />
           ) : null}
         </Grid.Column>
       </Grid>

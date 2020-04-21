@@ -52,4 +52,4 @@ export class NavBar extends Component {
   }
 }
 
-export default connect(null, { createEventNavbar })(withRouter(NavBar));
+export default withRouter(connect(null, { createEventNavbar })(NavBar));
