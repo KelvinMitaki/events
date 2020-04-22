@@ -12,6 +12,7 @@ import { Container } from "semantic-ui-react";
 import { Route, Switch, withRouter } from "react-router";
 import { changeOpenState } from "../../redux/actions";
 import { connect } from "react-redux";
+import ModalManager from "../../features/modals/ModalManager";
 
 export class App extends Component {
   componentDidMount() {
@@ -20,6 +21,7 @@ export class App extends Component {
   render() {
     return (
       <React.Fragment>
+        <ModalManager />
         <Route exact path="/" component={HomePage} />
         <Route
           path="/(.+)"

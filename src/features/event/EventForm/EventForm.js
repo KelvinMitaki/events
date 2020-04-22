@@ -62,7 +62,7 @@ export class EventForm extends Component {
     const { invalid, submitting, pristine } = this.props;
     return (
       <Grid>
-        <Grid.Column width={10}>
+        <Grid.Column width={14}>
           <Segment>
             <Header sub color="teal" content="Event Details" />
             <Form onSubmit={this.props.handleSubmit(this.onSubmit)}>

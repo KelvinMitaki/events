@@ -1,4 +1,5 @@
 import EventsReducer from "./EventsReducer";
+import modalsReducer from "./modalsReducer";
 import storage from "redux-persist/lib/storage";
 
 import { reducer as formReducer } from "redux-form";
@@ -14,6 +15,7 @@ const persistConfig = {
 const reducers = combineReducers({
   eventsReducer: EventsReducer,
   form: formReducer,
+  modals: modalsReducer,
 });
 
 export default persistReducer(persistConfig, reducers);

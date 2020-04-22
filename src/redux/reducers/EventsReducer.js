@@ -8,7 +8,7 @@ import {
   MANAGE_EVENT,
   CREATE_EVENT_NAVBAR,
   CHANGE_OPEN_STATE,
-} from "../utils/ActionConstants";
+} from "./utils/ActionConstants";
 import { eventsData } from "../EventsData/EventsData";
 
 const INITIAL_STATE = {
