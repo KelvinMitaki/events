@@ -11,3 +11,5 @@ export const CLOSE_MODAL = "CLOSE_MODAL";
 export const OPEN_MODAL = "OPEN_MODAL";
 export const LOGIN_USER = "LOGIN_USER";
 export const LOGOUT_USER = "LOGOUT_USER";
+export const LOADING_START = "LOADING_START";
+export const LOADING_STOP = "LOADING_STOP";

@@ -10,10 +10,12 @@ import {
   CHANGE_OPEN_STATE,
   OPEN_MODAL,
   CLOSE_MODAL,
-  LOGIN_USER,
   LOGOUT_USER,
+  LOADING_START,
+  LOADING_STOP,
 } from "../reducers/utils/ActionConstants";
 import { toastr } from "react-redux-toastr";
+import { SubmissionError } from "redux-form";
 
 //EVENTS
 
@@ -106,11 +108,34 @@ export const closeModal = () => {
   };
 };
 
-//AUTH
-export const logInUser = (creds) => {
+export const loadingStart = () => {
   return {
-    type: LOGIN_USER,
-    payload: creds,
+    type: LOADING_START,
+  };
+};
+
+export const loadingStop = () => {
+  return {
+    type: LOADING_STOP,
+  };
+};
+
+//AUTH
+
+export const logInUser = (creds) => {
+  return async (dispatch, getState, { getFirebase }) => {
+    try {
+      const firebase = getFirebase();
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(creds.email, creds.password);
+      dispatch(closeModal());
+    } catch (error) {
+      console.log(error);
+      throw new SubmissionError({
+        _error: error.message,
+      });
+    }
   };
 };
 

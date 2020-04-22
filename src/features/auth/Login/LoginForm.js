@@ -1,18 +1,24 @@
 import React from "react";
-import { Form, Segment, Button } from "semantic-ui-react";
+import { Form, Segment, Button, Label } from "semantic-ui-react";
 import { Field, reduxForm } from "redux-form";
 import TextInput from "../../event/form/TextInput";
-import { logInUser, closeModal } from "../../../redux/actions";
+import { logInUser } from "../../../redux/actions";
 import { connect } from "react-redux";
 
-const LoginForm = ({ handleSubmit, logInUser, closeModal }) => {
+const LoginForm = ({ handleSubmit, logInUser, error }) => {
   const onFormSubmit = (formValues) => {
-    logInUser(formValues);
-    closeModal();
+    return logInUser(formValues);
   };
+
   return (
-    <Form error size="large" onSubmit={handleSubmit(onFormSubmit)}>
+    <Form size="large" onSubmit={handleSubmit(onFormSubmit)}>
       <Segment>
+        {error && (
+          <Label basic color="red">
+            {" "}
+            {error}
+          </Label>
+        )}
         <Field
           name="email"
           component={TextInput}
@@ -34,4 +40,4 @@ const LoginForm = ({ handleSubmit, logInUser, closeModal }) => {
 };
 const wrappedComponent = reduxForm({ form: "LoginForm" })(LoginForm);
 
-export default connect(null, { logInUser, closeModal })(wrappedComponent);
+export default connect(null, { logInUser })(wrappedComponent);

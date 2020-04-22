@@ -1,13 +1,12 @@
 import React from "react";
 import { Menu, Image, Dropdown } from "semantic-ui-react";
 import { Link } from "react-router-dom";
-import { connect } from "react-redux";
 
-const SignedInMenu = ({ onSignOutClick, currentUser }) => {
+const SignedInMenu = ({ onSignOutClick, email }) => {
   return (
     <Menu.Item position="right">
       <Image avatar spaced="right" src="/assets/user.png" />
-      <Dropdown pointing="top left" text={currentUser}>
+      <Dropdown pointing="top left" text={email}>
         <Dropdown.Menu>
           <Dropdown.Item text="Create Event" icon="plus" />
           <Dropdown.Item text="My Events" icon="calendar" />
@@ -29,9 +28,5 @@ const SignedInMenu = ({ onSignOutClick, currentUser }) => {
     </Menu.Item>
   );
 };
-const mapStateToProps = (state) => {
-  return {
-    currentUser: state.auth.currentUser,
-  };
-};
-export default connect(mapStateToProps)(SignedInMenu);
+
+export default SignedInMenu;

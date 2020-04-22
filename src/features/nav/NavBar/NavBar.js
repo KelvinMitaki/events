@@ -9,12 +9,13 @@ import {
   logOutUser,
 } from "../../../redux/actions";
 import { connect } from "react-redux";
+import { withFirebase } from "react-redux-firebase";
 
 export class NavBar extends Component {
   onSignInClick = () => this.props.openModal("LoginModal");
   onRegisterClick = () => this.props.openModal("RegisterModal");
   onSignOutClick = () => {
-    this.props.logOutUser();
+    this.props.firebase.logout();
     this.props.history.push("/");
   };
   render() {
@@ -27,24 +28,29 @@ export class NavBar extends Component {
             events
           </Menu.Item>
           <Menu.Item as={NavLink} to="/events" exact name="Events" />
-          {this.props.authenticated && (
-            <React.Fragment>
-              <Menu.Item as={NavLink} to="/people" name="People" />
-              <Menu.Item>
-                <Button
-                  as={Link}
-                  to="/createEvent"
-                  floated="right"
-                  positive
-                  inverted
-                  content="Create Event"
-                  onClick={() => createEventNavbar()}
-                />
-              </Menu.Item>
-            </React.Fragment>
-          )}
-          {this.props.authenticated ? (
-            <SignedInMenu onSignOutClick={this.onSignOutClick} />
+          {this.props.authenticated.isLoaded &&
+            !this.props.authenticated.isEmpty && (
+              <React.Fragment>
+                <Menu.Item as={NavLink} to="/people" name="People" />
+                <Menu.Item>
+                  <Button
+                    as={Link}
+                    to="/createEvent"
+                    floated="right"
+                    positive
+                    inverted
+                    content="Create Event"
+                    onClick={() => createEventNavbar()}
+                  />
+                </Menu.Item>
+              </React.Fragment>
+            )}
+          {this.props.authenticated.isLoaded &&
+          !this.props.authenticated.isEmpty ? (
+            <SignedInMenu
+              email={this.props.authenticated.email}
+              onSignOutClick={this.onSignOutClick}
+            />
           ) : (
             <SignedOutMenu
               onSIgnInClick={this.onSignInClick}
@@ -58,9 +64,13 @@ export class NavBar extends Component {
 }
 const mapStateToProps = (state) => {
   return {
-    authenticated: state.auth.authenticated,
+    authenticated: state.firebase.auth,
   };
 };
 export default withRouter(
-  connect(mapStateToProps, { createEventNavbar, openModal, logOutUser })(NavBar)
+  withFirebase(
+    connect(mapStateToProps, { createEventNavbar, openModal, logOutUser })(
+      NavBar
+    )
+  )
 );

@@ -8,6 +8,8 @@ import {
   MANAGE_EVENT,
   CREATE_EVENT_NAVBAR,
   CHANGE_OPEN_STATE,
+  LOADING_START,
+  LOADING_STOP,
 } from "./utils/ActionConstants";
 import { eventsData } from "../EventsData/EventsData";
 
@@ -15,6 +17,7 @@ const INITIAL_STATE = {
   events: eventsData,
   isOpen: false,
   selectedEvent: null,
+  loading: false,
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -51,6 +54,10 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, selectedEvent: action.payload };
     case CHANGE_OPEN_STATE:
       return { ...state, isOpen: false };
+    case LOADING_START:
+      return { ...state, loading: true };
+    case LOADING_STOP:
+      return { ...state, loading: false };
     default:
       return state;
   }
