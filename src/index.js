@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
+import "react-redux-toastr/lib/css/react-redux-toastr.min.css";
 import App from "./app/layout/App";
 import reducers from "./redux/reducers";
 import thunk from "redux-thunk";
@@ -12,6 +13,7 @@ import { createStore, compose, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
+import ReduxToastr from "react-redux-toastr";
 
 const combineEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -21,6 +23,11 @@ ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
       <PersistGate persistor={persistStore(store)}>
+        <ReduxToastr
+          position="bottom-right"
+          transitionIn="fadeIn"
+          transitionOut="fadeOut"
+        />
         <App />
       </PersistGate>
     </BrowserRouter>

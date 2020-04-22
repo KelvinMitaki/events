@@ -9,6 +9,29 @@ import { Link } from "react-router-dom";
 export class EventListItem extends Component {
   render() {
     const { event, deleteEvent } = this.props;
+    const test = new Date(event.date);
+    const arr = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "June",
+      "July",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const year = test.getFullYear();
+    const month = arr[test.getMonth()];
+
+    const day = test.getDate();
+    const hour = test.getHours();
+
+    let minutes = test.getMinutes();
+    minutes = minutes === 0 ? "00" : minutes;
 
     return (
       <Segment.Group>
@@ -27,7 +50,8 @@ export class EventListItem extends Component {
         </Segment>
         <Segment>
           <span>
-            <Icon name="clock" /> {event.date} |
+            <Icon name="clock" />
+            {`${day} ${month} ${year} ${hour}:${minutes}`} |
             <Icon name="marker" /> time
           </span>
         </Segment>

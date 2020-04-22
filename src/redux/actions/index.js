@@ -13,19 +13,36 @@ import {
   LOGIN_USER,
   LOGOUT_USER,
 } from "../reducers/utils/ActionConstants";
+import { toastr } from "react-redux-toastr";
 
 //EVENTS
 
 export const createEvent = (data) => {
-  return {
-    type: CREATE_EVENT,
-    payload: data,
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: CREATE_EVENT,
+        payload: data,
+      });
+      toastr.success("Success!", "Event has been created");
+    } catch (error) {
+      console.log(error);
+      toastr.error("Oops!!!", "Something went wrong");
+    }
   };
 };
 export const updateEvent = (newEvent) => {
-  return {
-    type: UPDATE_EVENT,
-    payload: newEvent,
+  return async (dispatch) => {
+    try {
+      dispatch({
+        type: UPDATE_EVENT,
+        payload: newEvent,
+      });
+      toastr.success("Success!", "Event has been updated");
+    } catch (error) {
+      console.log(error);
+      toastr.error("Oops!!!", "Something went wrong");
+    }
   };
 };
 
