@@ -3,18 +3,19 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./app/layout/App";
 import reducers from "./redux/reducers";
+import thunk from "redux-thunk";
 
 import * as serviceWorker from "./serviceWorker";
 
 import { BrowserRouter } from "react-router-dom";
-import { createStore, compose } from "redux";
+import { createStore, compose, applyMiddleware } from "redux";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { persistStore } from "redux-persist";
 
 const combineEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const store = createStore(reducers, combineEnhancers());
+const store = createStore(reducers, combineEnhancers(applyMiddleware(thunk)));
 
 ReactDOM.render(
   <Provider store={store}>
