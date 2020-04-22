@@ -7,7 +7,8 @@ import { reducer as formReducer } from "redux-form";
 import { reducer as toastrReducer } from "react-redux-toastr";
 import { combineReducers } from "redux";
 import { persistReducer } from "redux-persist";
-
+import { firebaseReducer } from "react-redux-firebase";
+import { firestoreReducer } from "redux-firestore";
 const persistConfig = {
   key: "root",
   storage,
@@ -20,6 +21,8 @@ const reducers = combineReducers({
   modals: modalsReducer,
   auth: authReducer,
   toastr: toastrReducer,
+  firebase: firebaseReducer,
+  firestore: firestoreReducer,
 });
 
 export default persistReducer(persistConfig, reducers);

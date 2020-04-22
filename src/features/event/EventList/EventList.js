@@ -6,9 +6,10 @@ export class EventList extends Component {
   render() {
     return (
       <React.Fragment>
-        {this.props.events.map((event) => (
-          <EventListItem event={event} key={event.id} />
-        ))}
+        {this.props.events &&
+          this.props.events.map((event) => {
+            return <EventListItem event={event} key={event.id} />;
+          })}
       </React.Fragment>
     );
   }
@@ -16,7 +17,7 @@ export class EventList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    events: state.eventsReducer.events,
+    events: state.firestore.ordered.events,
   };
 };
 

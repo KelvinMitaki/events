@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 export class EventListItem extends Component {
   render() {
     const { event, deleteEvent } = this.props;
-    const test = new Date(event.date);
+    const test = event.date.toDate();
     const arr = [
       "Jan",
       "Feb",
@@ -58,8 +58,8 @@ export class EventListItem extends Component {
         <Segment secondary>
           <List horizontal>
             {event.attendees
-              ? event.attendees.map((attendee) => (
-                  <EventListAttendee key={attendee.id} attendee={attendee} />
+              ? Object.values(event.attendees).map((attendee, index) => (
+                  <EventListAttendee key={index} attendee={attendee} />
                 ))
               : null}
           </List>
