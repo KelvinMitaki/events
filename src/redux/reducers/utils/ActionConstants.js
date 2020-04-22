@@ -9,3 +9,5 @@ export const CREATE_EVENT_NAVBAR = "CREATE_EVENT_NAVBAR";
 export const CHANGE_OPEN_STATE = "CHANGE_OPEN_STATE";
 export const CLOSE_MODAL = "CLOSE_MODAL";
 export const OPEN_MODAL = "OPEN_MODAL";
+export const LOGIN_USER = "LOGIN_USER";
+export const LOGOUT_USER = "LOGOUT_USER";

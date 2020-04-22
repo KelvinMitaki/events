@@ -10,6 +10,8 @@ import {
   CHANGE_OPEN_STATE,
   OPEN_MODAL,
   CLOSE_MODAL,
+  LOGIN_USER,
+  LOGOUT_USER,
 } from "../reducers/utils/ActionConstants";
 
 //EVENTS
@@ -84,5 +86,19 @@ export const openModal = (modalType, modalProps) => {
 export const closeModal = () => {
   return {
     type: CLOSE_MODAL,
+  };
+};
+
+//AUTH
+export const logInUser = (creds) => {
+  return {
+    type: LOGIN_USER,
+    payload: creds,
+  };
+};
+
+export const logOutUser = () => {
+  return {
+    type: LOGOUT_USER,
   };
 };
