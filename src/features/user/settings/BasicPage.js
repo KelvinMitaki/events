@@ -11,10 +11,16 @@ import { connect } from "react-redux";
 
 class BasicsPage extends Component {
   onFormSubmit = (formValues) => {
-    this.props.updateProfileInFirestore({
-      ...formValues,
-      dateOfBirth: formValues.dateOfBirth.toString(),
-    });
+    let newFormValues;
+    if (formValues.dateOfBirth) {
+      newFormValues = {
+        ...formValues,
+        dateOfBirth: formValues.dateOfBirth.toString(),
+      };
+    } else {
+      newFormValues = { ...formValues };
+    }
+    this.props.updateProfileInFirestore(newFormValues);
   };
   render() {
     const { pristine, submitting } = this.props;
@@ -77,5 +83,9 @@ class BasicsPage extends Component {
 }
 
 export default connect(null, { updateProfileInFirestore })(
-  reduxForm({ form: "userProfile", enableReinitialize: true })(BasicsPage)
+  reduxForm({
+    form: "userProfile",
+    enableReinitialize: true,
+    destroyOnUnmount: false,
+  })(BasicsPage)
 );
