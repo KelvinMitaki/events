@@ -42,7 +42,7 @@ export class App extends Component {
                     path="/profile/:id"
                     component={UserDetailedPage}
                   />
-                  <Route exact path="/settings" component={SettingsDashboard} />
+                  <Route path="/settings" component={SettingsDashboard} />
                   <Route
                     path={["/createEvent", "/manage/:id"]}
                     component={EventForm}
