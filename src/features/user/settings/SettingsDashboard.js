@@ -7,14 +7,18 @@ import AccountPage from "./AccountPage";
 
 import { Grid } from "semantic-ui-react";
 import { Route, Redirect, Switch } from "react-router";
+import { connect } from "react-redux";
 
-const SettingsDashboard = () => {
+const SettingsDashboard = ({ user }) => {
   return (
     <Grid>
       <Grid.Column width={12}>
         <Switch>
           <Redirect from="/settings" to="/settings/basics" exact />
-          <Route path="/settings/basics" component={BasicPage} />
+          <Route
+            path="/settings/basics"
+            render={() => <BasicPage initialValues={user} />}
+          />
           <Route path="/settings/about" component={AboutPage} />
           <Route path="/settings/photos" component={PhotosPage} />
           <Route path="/settings/account" component={AccountPage} />
@@ -26,5 +30,9 @@ const SettingsDashboard = () => {
     </Grid>
   );
 };
-
-export default SettingsDashboard;
+const mapStateToProps = (state) => {
+  return {
+    user: state.firebase.profile,
+  };
+};
+export default connect(mapStateToProps)(SettingsDashboard);
