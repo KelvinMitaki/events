@@ -108,6 +108,7 @@ export const closeModal = () => {
   };
 };
 
+//LOADER
 export const loadingStart = () => {
   return {
     type: LOADING_START,
@@ -232,5 +233,53 @@ export const updateProfileInFirestore = (user) => async (
     toastr.success("Success", "Your profile has been updated");
   } catch (error) {
     console.log(error);
+  }
+};
+
+export const uploadProfileImage = (file, fileName) => async (
+  dispatch,
+  getState,
+  { getFirebase, getFirestore }
+) => {
+  const firebase = getFirebase();
+  const firestore = getFirestore();
+  const user = firebase.auth().currentUser;
+  const path = `${user.uid}/user_images`;
+  const options = {
+    name: fileName,
+  };
+  dispatch(loadingStart());
+  try {
+    //UPLOAD THE FILE TO FIREBASE STORAGE
+    const uploadedFile = await firebase.uploadFile(path, file, null, options);
+    //GET URL OF THE IMAGE
+    const downloadURL = await uploadedFile.uploadTaskSnapshot.ref.getDownloadURL();
+    //GET USERDOC
+    const userDoc = await firestore.get(`users/${user.uid}`);
+    //CHECK IF USER HAS PROFILE PHOTO IF NOT UPDATE PROFILE PHOTO
+    if (!userDoc.data().photoURL) {
+      await firebase.updateProfile({
+        photoURL: downloadURL,
+      });
+      await user.updateProfile({
+        photoURL: downloadURL,
+      });
+    }
+    //ADD THE IMAGE TO FIRESTORE
+    await firestore.add(
+      {
+        collection: "users",
+        doc: user.uid,
+        subcollections: [{ collection: "photos" }],
+      },
+      {
+        name: fileName,
+        url: downloadURL,
+      }
+    );
+    dispatch(loadingStop());
+  } catch (error) {
+    console.log(error);
+    dispatch(loadingStop());
   }
 };

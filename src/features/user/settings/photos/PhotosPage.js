@@ -10,8 +10,11 @@ import {
 } from "semantic-ui-react";
 import DropzoneInput from "./DropzoneInput";
 import CropperInput from "./CropperInput";
+import { toastr } from "react-redux-toastr";
+import { uploadProfileImage } from "../../../../redux/actions";
+import { connect } from "react-redux";
 
-const PhotosPage = () => {
+const PhotosPage = ({ loading, uploadProfileImage }) => {
   const [files, setFiles] = useState([]);
   const [image, setImage] = useState(null);
   useEffect(() => {
@@ -19,6 +22,20 @@ const PhotosPage = () => {
       files.forEach((file) => URL.revokeObjectURL(file.preview));
     };
   }, [files]);
+  const handleUploadImage = async () => {
+    try {
+      await uploadProfileImage(image, files[0].name);
+      handleCancelCrop();
+      toastr.success("Success", "Photo has been uploaded");
+    } catch (error) {
+      console.log(error);
+      toastr.error("Oops!!!", "Something went wrong");
+    }
+  };
+  const handleCancelCrop = () => {
+    setFiles([]);
+    setImage(null);
+  };
   return (
     <Segment>
       <Header dividing size="large" content="Your Photos" />
@@ -38,15 +55,33 @@ const PhotosPage = () => {
         <Grid.Column width={1} />
         <Grid.Column width={4}>
           <Header sub color="teal" content="Step 3 - Preview & Upload" />
+
           {files.length > 0 && (
-            <div
-              className="img-preview"
-              style={{
-                minHeight: "200px",
-                minWidth: "200px",
-                overflow: "hidden",
-              }}
-            />
+            <React.Fragment>
+              <div
+                className="img-preview"
+                style={{
+                  minHeight: "200px",
+                  minWidth: "200px",
+                  overflow: "hidden",
+                }}
+              />
+              <Button.Group>
+                <Button
+                  loading={loading}
+                  onClick={handleUploadImage}
+                  style={{ width: "100px" }}
+                  positive
+                  icon="check"
+                />
+                <Button
+                  onClick={handleCancelCrop}
+                  style={{ width: "100px" }}
+                  positive
+                  icon="close"
+                />
+              </Button.Group>
+            </React.Fragment>
           )}
         </Grid.Column>
       </Grid>
@@ -73,5 +108,9 @@ const PhotosPage = () => {
     </Segment>
   );
 };
-
-export default PhotosPage;
+const mapStateToProps = (state) => {
+  return {
+    loading: state.eventsReducer.loading,
+  };
+};
+export default connect(mapStateToProps, { uploadProfileImage })(PhotosPage);
