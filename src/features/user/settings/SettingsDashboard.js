@@ -2,12 +2,12 @@ import React from "react";
 import SettingsNav from "./SettingsNav";
 import BasicPage from "./BasicPage";
 import AboutPage from "./AboutPage";
-import PhotosPage from "./PhotosPage";
 import AccountPage from "./AccountPage";
 
 import { Grid } from "semantic-ui-react";
 import { Route, Redirect, Switch } from "react-router";
 import { connect } from "react-redux";
+import PhotosPage from "./photos/PhotosPage";
 
 const SettingsDashboard = ({ user }) => {
   return (
