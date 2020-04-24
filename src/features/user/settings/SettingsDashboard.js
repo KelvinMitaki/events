@@ -9,7 +9,7 @@ import { Route, Redirect, Switch } from "react-router";
 import { connect } from "react-redux";
 import PhotosPage from "./photos/PhotosPage";
 
-const SettingsDashboard = ({ user }) => {
+const SettingsDashboard = ({ user, auth }) => {
   return (
     <Grid>
       <Grid.Column width={12}>
@@ -20,7 +20,10 @@ const SettingsDashboard = ({ user }) => {
             render={() => <BasicPage initialValues={user} />}
           />
           <Route path="/settings/about" component={AboutPage} />
-          <Route path="/settings/photos" component={PhotosPage} />
+          <Route
+            path="/settings/photos"
+            render={() => auth.isLoaded && <PhotosPage auth={auth} />}
+          />
           <Route path="/settings/account" component={AccountPage} />
         </Switch>
       </Grid.Column>
@@ -33,6 +36,7 @@ const SettingsDashboard = ({ user }) => {
 const mapStateToProps = (state) => {
   return {
     user: state.firebase.profile,
+    auth: state.firebase.auth,
   };
 };
 export default connect(mapStateToProps)(SettingsDashboard);

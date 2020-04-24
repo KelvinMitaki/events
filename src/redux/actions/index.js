@@ -261,10 +261,10 @@ export const uploadProfileImage = (file, fileName) => async (
       await firebase.updateProfile({
         photoURL: downloadURL,
       });
-      await user.updateProfile({
-        photoURL: downloadURL,
-      });
     }
+    await user.updateProfile({
+      photoURL: downloadURL,
+    });
     //ADD THE IMAGE TO FIRESTORE
     await firestore.add(
       {

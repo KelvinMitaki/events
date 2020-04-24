@@ -13,8 +13,20 @@ import CropperInput from "./CropperInput";
 import { toastr } from "react-redux-toastr";
 import { uploadProfileImage } from "../../../../redux/actions";
 import { connect } from "react-redux";
+import { firestoreConnect } from "react-redux-firebase";
 
-const PhotosPage = ({ loading, uploadProfileImage }) => {
+const query = ({ auth }) => {
+  return [
+    {
+      collection: "users",
+      doc: auth.uid,
+      subcollections: [{ collection: "photos" }],
+      storeAs: "photos",
+    },
+  ];
+};
+
+const PhotosPage = ({ loading, uploadProfileImage, photos }) => {
   const [files, setFiles] = useState([]);
   const [image, setImage] = useState(null);
   useEffect(() => {
@@ -24,7 +36,7 @@ const PhotosPage = ({ loading, uploadProfileImage }) => {
   }, [files]);
   const handleUploadImage = async () => {
     try {
-      await uploadProfileImage(image, files[0].name);
+      await uploadProfileImage(image, files[0].path);
       handleCancelCrop();
       toastr.success("Success", "Photo has been uploaded");
     } catch (error) {
@@ -91,19 +103,24 @@ const PhotosPage = ({ loading, uploadProfileImage }) => {
 
       <Card.Group itemsPerRow={5}>
         <Card>
-          <Image src="https://randomuser.me/api/portraits/men/20.jpg" />
+          <Image
+            src="https://randomuser.me/api/portraits/men/20.jpg"
+            style={{ minHeight: "80%" }}
+          />
           <Button positive>Main Photo</Button>
         </Card>
-
-        <Card>
-          <Image src="https://randomuser.me/api/portraits/men/20.jpg" />
-          <div className="ui two buttons">
-            <Button basic color="green">
-              Main
-            </Button>
-            <Button basic icon="trash" color="red" />
-          </div>
-        </Card>
+        {photos &&
+          photos.map((photo) => (
+            <Card key={photo.id}>
+              <Image src={photo.url} style={{ minHeight: "80%" }} />
+              <div className="ui two buttons">
+                <Button basic color="green">
+                  Main
+                </Button>
+                <Button basic icon="trash" color="red" />
+              </div>
+            </Card>
+          ))}
       </Card.Group>
     </Segment>
   );
@@ -111,6 +128,10 @@ const PhotosPage = ({ loading, uploadProfileImage }) => {
 const mapStateToProps = (state) => {
   return {
     loading: state.eventsReducer.loading,
+    profile: state.firebase.profile,
+    photos: state.firestore.ordered.photos,
   };
 };
-export default connect(mapStateToProps, { uploadProfileImage })(PhotosPage);
+export default connect(mapStateToProps, { uploadProfileImage })(
+  firestoreConnect((auth) => query(auth))(PhotosPage)
+);
