@@ -124,7 +124,10 @@ const PhotosPage = ({
 
       <Card.Group itemsPerRow={5}>
         <Card>
-          <Image src={profile.photoURL} style={{ minHeight: "80%" }} />
+          <Image
+            src={profile.photoURL || "/assets/user.png"}
+            style={{ minHeight: "80%" }}
+          />
           <Button positive>Main Photo</Button>
         </Card>
         {photos &&

@@ -19,7 +19,10 @@ const SettingsDashboard = ({ user, auth }) => {
             path="/settings/basics"
             render={() => <BasicPage initialValues={user} />}
           />
-          <Route path="/settings/about" component={AboutPage} />
+          <Route
+            path="/settings/about"
+            render={() => <AboutPage initialValues={user} />}
+          />
           <Route
             path="/settings/photos"
             render={() => auth.isLoaded && <PhotosPage auth={auth} />}
