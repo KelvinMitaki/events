@@ -16,6 +16,7 @@ import {
 } from "../reducers/utils/ActionConstants";
 import { toastr } from "react-redux-toastr";
 import { SubmissionError, reset } from "redux-form";
+import cuid from "cuid";
 
 //EVENTS
 
@@ -244,9 +245,10 @@ export const uploadProfileImage = (file, fileName) => async (
   const firebase = getFirebase();
   const firestore = getFirestore();
   const user = firebase.auth().currentUser;
+  const imageName = cuid();
   const path = `${user.uid}/user_images`;
   const options = {
-    name: fileName,
+    name: imageName,
   };
   dispatch(loadingStart());
   try {
@@ -273,7 +275,7 @@ export const uploadProfileImage = (file, fileName) => async (
         subcollections: [{ collection: "photos" }],
       },
       {
-        name: fileName,
+        name: imageName,
         url: downloadURL,
       }
     );
@@ -281,5 +283,40 @@ export const uploadProfileImage = (file, fileName) => async (
   } catch (error) {
     console.log(error);
     dispatch(loadingStop());
+  }
+};
+
+export const deletePhoto = (photo) => async (
+  dispatch,
+  getState,
+  { getFirebase, getFirestore }
+) => {
+  const firebase = getFirebase();
+  const firestore = getFirestore();
+  const user = firebase.auth().currentUser;
+  try {
+    await firebase.deleteFile(`${user.uid}/user_images/${photo.name}`);
+    await firestore.delete({
+      collection: "users",
+      doc: user.uid,
+      subcollections: [{ collection: "photos", doc: photo.id }],
+    });
+  } catch (error) {
+    console.log(error);
+    throw new Error("Problem deleting photo");
+  }
+};
+export const updateProfilePhoto = (photo) => async (
+  dispatch,
+  getState,
+  { getFirebase }
+) => {
+  const firebase = getFirebase();
+  try {
+    await firebase.updateProfile({
+      photoURL: photo.url,
+    });
+  } catch (error) {
+    toastr.error("Oops!!!", "Problem updating main photo");
   }
 };

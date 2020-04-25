@@ -11,7 +11,11 @@ import {
 import DropzoneInput from "./DropzoneInput";
 import CropperInput from "./CropperInput";
 import { toastr } from "react-redux-toastr";
-import { uploadProfileImage } from "../../../../redux/actions";
+import {
+  uploadProfileImage,
+  deletePhoto,
+  updateProfilePhoto,
+} from "../../../../redux/actions";
 import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 
@@ -26,7 +30,14 @@ const query = ({ auth }) => {
   ];
 };
 
-const PhotosPage = ({ loading, uploadProfileImage, photos }) => {
+const PhotosPage = ({
+  loading,
+  uploadProfileImage,
+  photos,
+  profile,
+  deletePhoto,
+  updateProfilePhoto,
+}) => {
   const [files, setFiles] = useState([]);
   const [image, setImage] = useState(null);
   useEffect(() => {
@@ -47,6 +58,16 @@ const PhotosPage = ({ loading, uploadProfileImage, photos }) => {
   const handleCancelCrop = () => {
     setFiles([]);
     setImage(null);
+  };
+  const handleDeletePhoto = async (photo) => {
+    try {
+      await deletePhoto(photo);
+    } catch (error) {
+      toastr.error("Oops!!!", error);
+    }
+  };
+  const handleUpdateProfilePhoto = async (photo) => {
+    await updateProfilePhoto(photo);
   };
   return (
     <Segment>
@@ -103,24 +124,32 @@ const PhotosPage = ({ loading, uploadProfileImage, photos }) => {
 
       <Card.Group itemsPerRow={5}>
         <Card>
-          <Image
-            src="https://randomuser.me/api/portraits/men/20.jpg"
-            style={{ minHeight: "80%" }}
-          />
+          <Image src={profile.photoURL} style={{ minHeight: "80%" }} />
           <Button positive>Main Photo</Button>
         </Card>
         {photos &&
-          photos.map((photo) => (
-            <Card key={photo.id}>
-              <Image src={photo.url} style={{ minHeight: "80%" }} />
-              <div className="ui two buttons">
-                <Button basic color="green">
-                  Main
-                </Button>
-                <Button basic icon="trash" color="red" />
-              </div>
-            </Card>
-          ))}
+          photos
+            .filter((photo) => photo.url !== profile.photoURL)
+            .map((photo) => (
+              <Card key={photo.id}>
+                <Image src={photo.url} style={{ minHeight: "80%" }} />
+                <div className="ui two buttons">
+                  <Button
+                    onClick={() => handleUpdateProfilePhoto(photo)}
+                    basic
+                    color="green"
+                  >
+                    Main
+                  </Button>
+                  <Button
+                    onClick={() => handleDeletePhoto(photo)}
+                    basic
+                    icon="trash"
+                    color="red"
+                  />
+                </div>
+              </Card>
+            ))}
       </Card.Group>
     </Segment>
   );
@@ -132,6 +161,8 @@ const mapStateToProps = (state) => {
     photos: state.firestore.ordered.photos,
   };
 };
-export default connect(mapStateToProps, { uploadProfileImage })(
-  firestoreConnect((auth) => query(auth))(PhotosPage)
-);
+export default connect(mapStateToProps, {
+  uploadProfileImage,
+  deletePhoto,
+  updateProfilePhoto,
+})(firestoreConnect((auth) => query(auth))(PhotosPage));
