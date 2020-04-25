@@ -19,7 +19,7 @@ export class NavBar extends Component {
     this.props.history.push("/");
   };
   render() {
-    const { createEventNavbar, displayName, photoURL } = this.props;
+    const { createEventNavbar, displayName, photoURL, avatarUrl } = this.props;
     return (
       <Menu inverted fixed="top">
         <Container>
@@ -52,6 +52,7 @@ export class NavBar extends Component {
               onSignOutClick={this.onSignOutClick}
               displayName={displayName}
               photoURL={photoURL}
+              avatarUrl={avatarUrl}
             />
           ) : (
             <SignedOutMenu
@@ -69,6 +70,7 @@ const mapStateToProps = (state) => {
     authenticated: state.firebase.auth,
     displayName: state.firebase.profile.displayName,
     photoURL: state.firebase.profile.photoURL,
+    avatarUrl: state.firebase.profile.avatarUrl,
   };
 };
 export default withRouter(

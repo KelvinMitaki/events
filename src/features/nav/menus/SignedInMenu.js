@@ -3,10 +3,20 @@ import { Menu, Image, Dropdown } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 
-const SignedInMenu = ({ onSignOutClick, photoURL, displayName, uid }) => {
+const SignedInMenu = ({
+  onSignOutClick,
+  photoURL,
+  avatarUrl,
+  displayName,
+  uid,
+}) => {
   return (
     <Menu.Item position="right">
-      <Image avatar spaced="right" src={`${photoURL || "/assets/user.png"}`} />
+      <Image
+        avatar
+        spaced="right"
+        src={`${photoURL || avatarUrl || "/assets/user.png"}`}
+      />
       <Dropdown pointing="top left" text={displayName}>
         <Dropdown.Menu>
           <Dropdown.Item text="Create Event" icon="plus" />

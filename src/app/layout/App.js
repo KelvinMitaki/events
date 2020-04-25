@@ -19,6 +19,7 @@ export class App extends Component {
     this.props.changeOpenState();
   }
   render() {
+    const { profile } = this.props;
     return (
       <React.Fragment>
         <ModalManager />
@@ -40,7 +41,7 @@ export class App extends Component {
                   <Route
                     exact
                     path="/profile/:id"
-                    component={UserDetailedPage}
+                    render={() => profile.isLoaded && <UserDetailedPage />}
                   />
                   <Route path="/settings" component={SettingsDashboard} />
                   <Route
@@ -56,5 +57,10 @@ export class App extends Component {
     );
   }
 }
+const mapStateToProps = (state) => {
+  return {
+    profile: state.firebase.profile,
+  };
+};
 
-export default withRouter(connect(null, { changeOpenState })(App));
+export default withRouter(connect(mapStateToProps, { changeOpenState })(App));
