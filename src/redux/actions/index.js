@@ -20,20 +20,50 @@ import cuid from "cuid";
 
 //EVENTS
 
-export const createEvent = (data) => {
-  return async (dispatch) => {
-    try {
-      dispatch({
-        type: CREATE_EVENT,
-        payload: data,
-      });
-      toastr.success("Success!", "Event has been created");
-    } catch (error) {
-      console.log(error);
-      toastr.error("Oops!!!", "Something went wrong");
-    }
+const createNewEvent = (user, photoURL, event) => {
+  return {
+    ...event,
+    hostUid: user.uid,
+    hostedBy: user.displayName,
+    hostPhotoURL: photoURL || "/assets/user.png",
+    created: new Date(),
+    attendees: {
+      [user.uid]: {
+        going: true,
+        joinDate: new Date(),
+        photoURL: photoURL || "/assets/user.png",
+        displayName: user.displayName,
+        host: true,
+      },
+    },
   };
 };
+
+export const createEvent = (event) => async (
+  dispatch,
+  getState,
+  { getFirebase, getFirestore }
+) => {
+  const firebase = getFirebase();
+  const firestore = getFirestore();
+  const user = firebase.auth().currentUser;
+  const photoURL = getState().firebase.profile.photoURL;
+  const newEvent = createNewEvent(user, photoURL, event);
+  try {
+    const createdEvent = await firestore.add("events", newEvent);
+    await firestore.set(`event_attendee/${createdEvent.id}_${user.uid}`, {
+      eventId: createdEvent.id,
+      userUid: user.uid,
+      eventDate: event.date,
+      host: true,
+    });
+    toastr.success("Success!", "Event has been created");
+    return createdEvent;
+  } catch (error) {
+    toastr.error("Oops!!!", "Something went wrong");
+  }
+};
+
 export const updateEvent = (newEvent) => {
   return async (dispatch) => {
     try {
@@ -187,7 +217,7 @@ export const socialLogin = (selectedProvider) => async (
     dispatch(closeModal());
     let user = await firebase.login({
       provider: selectedProvider,
-      type: "popup",
+      type: "redirect",
     });
     if (user.additionalUserInfo.isNewUser) {
       await firestore.set(`users/${user.user.uid}`, {

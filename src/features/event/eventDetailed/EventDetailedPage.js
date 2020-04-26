@@ -4,20 +4,28 @@ import EventDetailedHeader from "./EventDetailedHeader";
 import EventDetailedInfo from "./EventDetailedInfo";
 import EventDetailedChat from "./EventDetailedChat";
 import EventDetailedSidebar from "./EventDetailedSidebar";
+import { withRouter } from "react-router";
+import { firestoreConnect } from "react-redux-firebase";
 
-const EventDetailedPage = () => {
+const EventDetailedPage = ({ events, match }) => {
+  const event = events.find((event) => event.id === match.params.id);
+
   return (
     <Grid>
       <Grid.Column width={10}>
-        <EventDetailedHeader />
-        <EventDetailedInfo />
-        <EventDetailedChat />
+        <EventDetailedHeader event={event} />
+        <EventDetailedInfo event={event} />
+        <EventDetailedChat event={event} />
       </Grid.Column>
       <Grid.Column width={6}>
-        <EventDetailedSidebar />
+        <EventDetailedSidebar event={event} />
       </Grid.Column>
     </Grid>
   );
 };
 
-export default EventDetailedPage;
+export default withRouter(
+  firestoreConnect(({ match }) => [
+    { collection: "events", doc: match.params.id, storeAs: "singleEvent" },
+  ])(EventDetailedPage)
+);

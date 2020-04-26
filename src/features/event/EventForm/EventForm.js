@@ -44,17 +44,13 @@ const category = [
 ];
 
 export class EventForm extends Component {
-  onSubmit = (formValues) => {
-    if (formValues.id) {
-      this.props.updateEvent(formValues);
-      this.props.history.push(`/events/${formValues.id}`);
+  onSubmit = async (event) => {
+    if (event.id) {
+      this.props.updateEvent(event);
+      this.props.history.push(`/events/${event.id}`);
     } else {
-      const id = cuid();
-      const hostPhotoURL = "/assets/user.png";
-      const hostedBy = "Kevoh";
-      const fullUser = { id, hostPhotoURL, hostedBy, ...formValues };
-      this.props.createEvent(fullUser);
-      this.props.history.push(`/events/${id}`);
+      const createdEvent = await this.props.createEvent(event);
+      this.props.history.push(`/events/${createdEvent.id}`);
     }
   };
 

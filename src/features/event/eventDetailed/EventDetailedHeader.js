@@ -16,82 +16,84 @@ const eventImageTextStyle = {
   height: "auto",
   color: "white",
 };
-const EventDetailedHeader = ({ event, manageEvent, history }) => {
-  const test = new Date(event.date);
-  const arr = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "June",
-    "July",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const year = test.getFullYear();
-  const month = arr[test.getMonth()];
+const EventDetailedHeader = ({ event, manageEvent, history, singleEvent }) => {
+  if (singleEvent) {
+    const test = new Date(singleEvent.date.toDate());
+    const arr = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "June",
+      "July",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const year = test.getFullYear();
+    const month = arr[test.getMonth()];
 
-  const day = test.getDate();
-  const hour = test.getHours();
+    const day = test.getDate();
+    const hour = test.getHours();
 
-  let minutes = test.getMinutes();
-  minutes = minutes === 0 ? "00" : minutes;
+    let minutes = test.getMinutes();
+    minutes = minutes === 0 ? "00" : minutes;
 
-  return (
-    <Segment.Group>
-      <Segment basic attached="top" style={{ padding: "0" }}>
-        <Image
-          src="/assets/categoryImages/drinks.jpg"
-          fluid
-          style={eventImageStyle}
-        />
+    return (
+      <Segment.Group>
+        <Segment basic attached="top" style={{ padding: "0" }}>
+          <Image
+            src="/assets/categoryImages/drinks.jpg"
+            fluid
+            style={eventImageStyle}
+          />
 
-        <Segment basic style={eventImageTextStyle}>
-          <Item.Group>
-            <Item>
-              <Item.Content>
-                <Header
-                  size="huge"
-                  content={event.title}
-                  style={{ color: "white" }}
-                />
-                <p> {`${day} ${month} ${year} ${hour}:${minutes}`}</p>
-                <p>
-                  Hosted by <strong>{event.hostedBy}</strong>
-                </p>
-              </Item.Content>
-            </Item>
-          </Item.Group>
+          <Segment basic style={eventImageTextStyle}>
+            <Item.Group>
+              <Item>
+                <Item.Content>
+                  <Header
+                    size="huge"
+                    content={singleEvent.title}
+                    style={{ color: "white" }}
+                  />
+                  <p> {`${day} ${month} ${year} ${hour}:${minutes}`}</p>
+                  <p>
+                    Hosted by <strong>{singleEvent.hostedBy}</strong>
+                  </p>
+                </Item.Content>
+              </Item>
+            </Item.Group>
+          </Segment>
         </Segment>
-      </Segment>
 
-      <Segment attached="bottom">
-        <Button>Cancel My Place</Button>
-        <Button color="teal">JOIN THIS EVENT</Button>
+        <Segment attached="bottom">
+          <Button>Cancel My Place</Button>
+          <Button color="teal">JOIN THIS EVENT</Button>
 
-        <Button
-          color="orange"
-          floated="right"
-          onClick={() => {
-            manageEvent(event);
-            history.push(`/manage/${event.id}`);
-          }}
-        >
-          Manage Event
-        </Button>
-      </Segment>
-    </Segment.Group>
-  );
+          <Button
+            color="orange"
+            floated="right"
+            onClick={() => {
+              manageEvent(event);
+              history.push(`/manage/${singleEvent.id}`);
+            }}
+          >
+            Manage Event
+          </Button>
+        </Segment>
+      </Segment.Group>
+    );
+  } else {
+    return null;
+  }
 };
-const mapStateToProps = (state, ownProps) => {
+const mapStateToProps = (state) => {
   return {
-    event: state.eventsReducer.events.find(
-      (event) => event.id === ownProps.match.params.id
-    ),
+    singleEvent: state.firestore.data.singleEvent,
   };
 };
 export default withRouter(
