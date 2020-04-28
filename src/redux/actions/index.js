@@ -378,3 +378,36 @@ export const updateProfilePhoto = (photo) => async (
     toastr.error("Oops!!!", "Problem updating main photo");
   }
 };
+
+export const goingToEvent = (event) => async (
+  dispatch,
+  getState,
+  { getFirebase, getFirestore }
+) => {
+  const firebase = getFirebase();
+  const firestore = getFirestore();
+  const user = firebase.auth().currentUser;
+  const profile = getState().firebase.profile;
+  const attendee = {
+    going: true,
+    joinDate: firestore.FieldValue.serverTimestamp(),
+    photoURL: profile.photoURL || "/assets/user.png",
+    displayName: profile.displayName,
+    host: false,
+  };
+  try {
+    await firestore.update(`events/${event.id}`, {
+      [`attendees.${user.uid}`]: attendee,
+    });
+    await firestore.set(`event_attendee/${event.id}_${user.uid}`, {
+      eventDate: event.date,
+      eventId: event.id,
+      host: false,
+      userUid: user.uid,
+    });
+    toastr.success("Success", "You have signed up to the event");
+  } catch (error) {
+    console.log(error);
+    toastr.error("Oops!!!", "Problem signing up to the event");
+  }
+};

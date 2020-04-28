@@ -50,11 +50,11 @@ export class EventForm extends Component {
       `events/${this.props.match.params.id}`
     );
   }
-  // async componentWillUnmount() {
-  //   await this.props.firestore.unsetListener(
-  //     `events/${this.props.match.params.id}`
-  //   );
-  // }
+  async componentWillUnmount() {
+    await this.props.firestore.unsetListener(
+      `events/${this.props.match.params.id}`
+    );
+  }
   onSubmit = async (event) => {
     if (event.id) {
       this.props.updateEvent(event);

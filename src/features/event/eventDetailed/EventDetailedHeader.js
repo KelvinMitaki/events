@@ -2,7 +2,7 @@ import React from "react";
 import { Segment, Image, Header, Item, Button } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
-import { manageEvent } from "../../../redux/actions";
+import { manageEvent, goingToEvent } from "../../../redux/actions";
 
 const eventImageStyle = {
   filter: "brightness(30%)",
@@ -16,7 +16,13 @@ const eventImageTextStyle = {
   height: "auto",
   color: "white",
 };
-const EventDetailedHeader = ({ manageEvent, history, singleEvent, uid }) => {
+const EventDetailedHeader = ({
+  manageEvent,
+  history,
+  singleEvent,
+  uid,
+  goingToEvent,
+}) => {
   if (singleEvent) {
     return singleEvent.map((event) => {
       const test = new Date(event.date.toDate());
@@ -82,7 +88,9 @@ const EventDetailedHeader = ({ manageEvent, history, singleEvent, uid }) => {
                 {isGoing ? (
                   <Button>Cancel My Place</Button>
                 ) : (
-                  <Button color="teal">JOIN THIS EVENT</Button>
+                  <Button onClick={() => goingToEvent(event)} color="teal">
+                    JOIN THIS EVENT
+                  </Button>
                 )}
               </React.Fragment>
             )}
@@ -113,5 +121,5 @@ const mapStateToProps = (state) => {
   };
 };
 export default withRouter(
-  connect(mapStateToProps, { manageEvent })(EventDetailedHeader)
+  connect(mapStateToProps, { manageEvent, goingToEvent })(EventDetailedHeader)
 );
