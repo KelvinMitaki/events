@@ -14,10 +14,14 @@ import {
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
 import { firestoreConnect } from "react-redux-firebase";
+import LazyLoad from "react-lazyload";
+import Spinner from "../../Spinner/Spinner";
 
 class UserDetailedPage extends Component {
   render() {
-    const { user, photos, auth } = this.props;
+    const { user, photos, auth, requesting } = this.props;
+    const loading = Object.values(requesting).some((req) => req === true);
+    if (loading) return <Spinner />;
     if (user) {
       const currentmilliSeconds =
         new Date().getTime() - Date.parse(user.dateOfBirth);
@@ -54,11 +58,17 @@ class UserDetailedPage extends Component {
               <Segment>
                 <Item.Group>
                   <Item>
-                    <Item.Image
+                    <LazyLoad
                       avatar
                       size="small"
-                      src={user.photoURL || user.avatarUrl}
-                    />
+                      placeholder={<Item.Image src="/assets/user.png" />}
+                    >
+                      <Item.Image
+                        avatar
+                        size="small"
+                        src={user.photoURL || user.avatarUrl}
+                      />
+                    </LazyLoad>
                     <Item.Content verticalAlign="bottom">
                       <Header as="h1">{user.displayName} </Header>
                       <br />
@@ -131,7 +141,7 @@ class UserDetailedPage extends Component {
                     content="Edit Profile"
                   />
                 ) : (
-                  <Button color="teal" fluid basic as={Link} content="Follow" />
+                  <Button color="teal" fluid basic content="Follow" />
                 )}
               </Segment>
             </Grid.Column>
@@ -142,7 +152,12 @@ class UserDetailedPage extends Component {
                 <Image.Group size="small">
                   {photos &&
                     photos.map((photo) => (
-                      <Image key={photo.id} src={photo.url} />
+                      <LazyLoad
+                        key={photo.id}
+                        placeholder={<Image src="/assets/user.png" />}
+                      >
+                        <Image src={photo.url} />
+                      </LazyLoad>
                     ))}
                 </Image.Group>
               </Segment>
@@ -199,6 +214,7 @@ const mapStateToProps = (state) => {
     user: user,
     photos: state.firestore.ordered.photos,
     auth: state.firebase.auth,
+    requesting: state.firestore.status.requesting,
   };
 };
 export default withRouter(
