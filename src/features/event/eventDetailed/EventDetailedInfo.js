@@ -3,7 +3,7 @@ import { Segment, Grid, Icon } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
 
-const EventDetailedInfo = ({ event, singleEvent }) => {
+const EventDetailedInfo = ({ singleEvent }) => {
   if (singleEvent) {
     const test = new Date(singleEvent.date.toDate());
     const arr = [

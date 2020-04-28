@@ -8,7 +8,15 @@ import { Link } from "react-router-dom";
 
 export class EventListItem extends Component {
   render() {
-    const { event, deleteEvent } = this.props;
+    const { event } = this.props;
+
+    const newAttendees = Object.keys(event.attendees).map((key) => {
+      return {
+        id: key,
+        ...event.attendees[key],
+      };
+    });
+
     const test = event.date.toDate();
     const arr = [
       "Jan",
@@ -40,9 +48,17 @@ export class EventListItem extends Component {
             <Item>
               <Item.Image size="tiny" circular src={event.hostPhotoURL} />
               <Item.Content>
-                <Item.Header as="a">{event.title}</Item.Header>
+                <Item.Header as={Link} to={`/events/${event.id}`}>
+                  {" "}
+                  {event.title}
+                </Item.Header>
                 <Item.Description>
-                  Hosted by <strong>{event.hostedBy}</strong>
+                  Hosted by{" "}
+                  <strong>
+                    <Link to={`/profile/${event.hostUid}`}>
+                      {event.hostedBy}
+                    </Link>
+                  </strong>
                 </Item.Description>
                 {event.cancelled && (
                   <Label
@@ -66,8 +82,8 @@ export class EventListItem extends Component {
         <Segment secondary>
           <List horizontal>
             {event.attendees
-              ? Object.values(event.attendees).map((attendee, index) => (
-                  <EventListAttendee key={index} attendee={attendee} />
+              ? newAttendees.map((attendee) => (
+                  <EventListAttendee key={attendee.id} attendee={attendee} />
                 ))
               : null}
           </List>

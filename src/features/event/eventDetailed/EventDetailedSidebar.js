@@ -2,8 +2,9 @@ import React, { Fragment } from "react";
 import { Segment, Item, Label } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
+import { Link } from "react-router-dom";
 
-const EventDetailedSidebar = ({ event, singleEvent }) => {
+const EventDetailedSidebar = ({ singleEvent }) => {
   if (singleEvent) {
     return (
       <Fragment>
@@ -42,7 +43,11 @@ const EventDetailedSidebar = ({ event, singleEvent }) => {
                     )}
                     <Item.Image size="tiny" src={attendee.photoURL} />
                     <Item.Content verticalAlign="middle">
-                      <Item.Header as="h3">{attendee.displayName} </Item.Header>
+                      <Item.Header as="h3">
+                        <Link to={`/profile/${singleEvent.hostUid}`}>
+                          {attendee.displayName}{" "}
+                        </Link>
+                      </Item.Header>
                     </Item.Content>
                   </Item>
                 );

@@ -7,6 +7,7 @@ import {
   goingToEvent,
   cancelGoingToEvent,
 } from "../../../redux/actions";
+import { Link } from "react-router-dom";
 
 const eventImageStyle = {
   filter: "brightness(30%)",
@@ -80,7 +81,15 @@ const EventDetailedHeader = ({
                     />
                     <p> {`${day} ${month} ${year} ${hour}:${minutes}`}</p>
                     <p>
-                      Hosted by <strong>{event.hostedBy}</strong>
+                      Hosted by{" "}
+                      <strong>
+                        <Link
+                          to={`/profile/${event.hostUid}`}
+                          style={{ color: "white" }}
+                        >
+                          {event.hostedBy}
+                        </Link>
+                      </strong>
                     </p>
                   </Item.Content>
                 </Item>
