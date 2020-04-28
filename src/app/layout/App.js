@@ -13,14 +13,13 @@ import { Route, Switch, withRouter } from "react-router";
 import { changeOpenState } from "../../redux/actions";
 import { connect } from "react-redux";
 import ModalManager from "../../features/modals/ModalManager";
-import { firestoreConnect } from "react-redux-firebase";
 
 export class App extends Component {
   componentDidMount() {
     this.props.changeOpenState();
   }
   render() {
-    const { profile, event } = this.props;
+    const { profile } = this.props;
     return (
       <React.Fragment>
         <ModalManager />
@@ -36,7 +35,7 @@ export class App extends Component {
                   <Route
                     exact
                     path="/events/:id"
-                    render={() => event && <EventDetailedPage events={event} />}
+                    render={() => <EventDetailedPage />}
                   />
                   <Route exact path="/people" component={PeopleDashboard} />
                   <Route
@@ -61,12 +60,7 @@ export class App extends Component {
 const mapStateToProps = (state) => {
   return {
     profile: state.firebase.profile,
-    event: state.firestore.ordered.events,
   };
 };
 
-export default withRouter(
-  connect(mapStateToProps, { changeOpenState })(
-    firestoreConnect([{ collection: "events" }])(App)
-  )
-);
+export default withRouter(connect(mapStateToProps, { changeOpenState })(App));

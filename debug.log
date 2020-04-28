@@ -1,2 +1,14 @@
 [0421/231026.056:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
 [0421/231026.258:ERROR:exception_snapshot_win.cc(98)] thread ID 37360 not found in process
+[0426/215229.514:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0426/215229.661:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0426/215229.526:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0426/215229.537:ERROR:process_reader_win.cc(123)] NtOpenThread: {Access Denied} A process has requested access to an object, but has not been granted those access rights. (0xc0000022)
+[0426/215229.175:ERROR:scoped_process_suspend.cc(31)] NtSuspendProcess: An attempt was made to access an exiting process. (0xc000010a)
+[0426/215232.212:ERROR:exception_snapshot_win.cc(98)] thread ID 42436 not found in process
+[0426/215232.212:ERROR:exception_snapshot_win.cc(98)] thread ID 6640 not found in process
+[0426/215232.219:ERROR:exception_snapshot_win.cc(98)] thread ID 41728 not found in process
+[0426/215232.219:ERROR:exception_snapshot_win.cc(98)] thread ID 41740 not found in process
+[0426/215232.220:ERROR:scoped_process_suspend.cc(40)] NtResumeProcess: An attempt was made to access an exiting process. (0xc000010a)
+[0426/215232.219:ERROR:process_info.cc(118)] ReadProcessMemory bool __cdecl crashpad::(anonymous namespace)::ReadStruct(HANDLE, crashpad::WinVMAddress, T *) [T = crashpad::process_types::PEB<crashpad::process_types::internal::Traits64>]: Only part of a ReadProcessMemory or WriteProcessMemory request was completed. (0x12B)
+[0426/215232.290:ERROR:process_info.cc(551)] ReadProcessData failed

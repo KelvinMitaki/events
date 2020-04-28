@@ -14,7 +14,13 @@ const DateInput = ({
       <ReactDatePicker
         {...props}
         placeholderText={placeholder}
-        selected={value ? new Date(value) : null}
+        selected={
+          value
+            ? Object.prototype.toString.call(value) !== "[object Date]"
+              ? value.toDate()
+              : new Date(value)
+            : null
+        }
         onChange={onChange}
         onBlur={onBlur}
         onChangeRaw={(e) => e.preventDefault()}

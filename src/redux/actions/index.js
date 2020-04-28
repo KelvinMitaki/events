@@ -47,7 +47,9 @@ export const createEvent = (event) => async (
   const firebase = getFirebase();
   const firestore = getFirestore();
   const user = firebase.auth().currentUser;
-  const photoURL = getState().firebase.profile.photoURL;
+  const photoURL =
+    getState().firebase.profile.photoURL ||
+    getState().firebase.profile.avatarUrl;
   const newEvent = createNewEvent(user, photoURL, event);
   try {
     const createdEvent = await firestore.add("events", newEvent);
@@ -65,18 +67,37 @@ export const createEvent = (event) => async (
 };
 
 export const updateEvent = (newEvent) => {
-  return async (dispatch) => {
+  return async (dispatch, getState, { getFirestore }) => {
+    const firestore = getFirestore();
     try {
-      dispatch({
-        type: UPDATE_EVENT,
-        payload: newEvent,
-      });
+      await firestore.update(`/events/${newEvent.id}`, newEvent);
       toastr.success("Success!", "Event has been updated");
     } catch (error) {
       console.log(error);
       toastr.error("Oops!!!", "Something went wrong");
     }
   };
+};
+
+export const cancelEventToggle = (cancelled, eventId) => async (
+  dispatch,
+  getState,
+  { getFirestore }
+) => {
+  const firestore = getFirestore();
+  const message = cancelled
+    ? "Are you sure you want to cancel the event?"
+    : "This will reactivate the event, are you sure?";
+  try {
+    toastr.confirm(message, {
+      onOk: async () =>
+        await firestore.update(`events/${eventId}`, {
+          cancelled: cancelled,
+        }),
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const deleteEvent = (id) => {
@@ -104,9 +125,16 @@ export const createEventButton = () => {
 };
 
 export const manageEvent = (event) => {
+  const { date, ...newEvent } = event;
+  const newDate = date.toDate();
+
+  const newEventWithDate = {
+    ...newEvent,
+    date: newDate,
+  };
   return {
     type: MANAGE_EVENT,
-    payload: event,
+    payload: newEventWithDate,
   };
 };
 

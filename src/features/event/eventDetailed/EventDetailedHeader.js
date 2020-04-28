@@ -16,84 +16,100 @@ const eventImageTextStyle = {
   height: "auto",
   color: "white",
 };
-const EventDetailedHeader = ({ event, manageEvent, history, singleEvent }) => {
+const EventDetailedHeader = ({ manageEvent, history, singleEvent, uid }) => {
   if (singleEvent) {
-    const test = new Date(singleEvent.date.toDate());
-    const arr = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "June",
-      "July",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    const year = test.getFullYear();
-    const month = arr[test.getMonth()];
+    return singleEvent.map((event) => {
+      const test = new Date(event.date.toDate());
+      const arr = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "June",
+        "July",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const year = test.getFullYear();
+      const month = arr[test.getMonth()];
 
-    const day = test.getDate();
-    const hour = test.getHours();
+      const day = test.getDate();
+      const hour = test.getHours();
 
-    let minutes = test.getMinutes();
-    minutes = minutes === 0 ? "00" : minutes;
+      let minutes = test.getMinutes();
+      minutes = minutes === 0 ? "00" : minutes;
+      const newUser = Object.keys(event.attendees).map((key) => {
+        return {
+          id: key,
+          ...event.attendees[key],
+        };
+      });
+      const isGoing = newUser.some((u) => u.id === uid);
+      return (
+        <Segment.Group key={event}>
+          <Segment basic attached="top" style={{ padding: "0" }}>
+            <Image
+              src="/assets/categoryImages/drinks.jpg"
+              fluid
+              style={eventImageStyle}
+            />
 
-    return (
-      <Segment.Group>
-        <Segment basic attached="top" style={{ padding: "0" }}>
-          <Image
-            src="/assets/categoryImages/drinks.jpg"
-            fluid
-            style={eventImageStyle}
-          />
-
-          <Segment basic style={eventImageTextStyle}>
-            <Item.Group>
-              <Item>
-                <Item.Content>
-                  <Header
-                    size="huge"
-                    content={singleEvent.title}
-                    style={{ color: "white" }}
-                  />
-                  <p> {`${day} ${month} ${year} ${hour}:${minutes}`}</p>
-                  <p>
-                    Hosted by <strong>{singleEvent.hostedBy}</strong>
-                  </p>
-                </Item.Content>
-              </Item>
-            </Item.Group>
+            <Segment basic style={eventImageTextStyle}>
+              <Item.Group>
+                <Item>
+                  <Item.Content>
+                    <Header
+                      size="huge"
+                      content={event.title}
+                      style={{ color: "white" }}
+                    />
+                    <p> {`${day} ${month} ${year} ${hour}:${minutes}`}</p>
+                    <p>
+                      Hosted by <strong>{event.hostedBy}</strong>
+                    </p>
+                  </Item.Content>
+                </Item>
+              </Item.Group>
+            </Segment>
           </Segment>
-        </Segment>
-
-        <Segment attached="bottom">
-          <Button>Cancel My Place</Button>
-          <Button color="teal">JOIN THIS EVENT</Button>
-
-          <Button
-            color="orange"
-            floated="right"
-            onClick={() => {
-              manageEvent(event);
-              history.push(`/manage/${singleEvent.id}`);
-            }}
-          >
-            Manage Event
-          </Button>
-        </Segment>
-      </Segment.Group>
-    );
+          <Segment attached="bottom" clearing>
+            {uid !== event.hostUid && (
+              <React.Fragment>
+                {isGoing ? (
+                  <Button>Cancel My Place</Button>
+                ) : (
+                  <Button color="teal">JOIN THIS EVENT</Button>
+                )}
+              </React.Fragment>
+            )}
+            {uid === event.hostUid && (
+              <Button
+                color="orange"
+                floated="right"
+                onClick={() => {
+                  manageEvent(event);
+                  history.push(`/manage/${event.id}`);
+                }}
+              >
+                Manage Event
+              </Button>
+            )}
+          </Segment>
+        </Segment.Group>
+      );
+    });
   } else {
     return null;
   }
 };
 const mapStateToProps = (state) => {
   return {
-    singleEvent: state.firestore.data.singleEvent,
+    singleEvent: state.firestore.ordered.singleEvent,
+    uid: state.firebase.auth.uid,
   };
 };
 export default withRouter(

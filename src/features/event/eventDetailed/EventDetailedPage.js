@@ -7,18 +7,16 @@ import EventDetailedSidebar from "./EventDetailedSidebar";
 import { withRouter } from "react-router";
 import { firestoreConnect } from "react-redux-firebase";
 
-const EventDetailedPage = ({ events, match }) => {
-  const event = events.find((event) => event.id === match.params.id);
-
+const EventDetailedPage = () => {
   return (
     <Grid>
       <Grid.Column width={10}>
-        <EventDetailedHeader event={event} />
-        <EventDetailedInfo event={event} />
-        <EventDetailedChat event={event} />
+        <EventDetailedHeader />
+        <EventDetailedInfo />
+        <EventDetailedChat />
       </Grid.Column>
       <Grid.Column width={6}>
-        <EventDetailedSidebar event={event} />
+        <EventDetailedSidebar />
       </Grid.Column>
     </Grid>
   );
