@@ -245,7 +245,7 @@ export const socialLogin = (selectedProvider) => async (
     dispatch(closeModal());
     let user = await firebase.login({
       provider: selectedProvider,
-      type: "redirect",
+      type: "popup",
     });
     if (user.additionalUserInfo.isNewUser) {
       await firestore.set(`users/${user.user.uid}`, {

@@ -17,11 +17,35 @@ import { firestoreConnect } from "react-redux-firebase";
 
 class UserDetailedPage extends Component {
   render() {
-    const { user, photos } = this.props;
+    const { user, photos, auth } = this.props;
     if (user) {
       const currentmilliSeconds =
         new Date().getTime() - Date.parse(user.dateOfBirth);
       const years = Math.floor(currentmilliSeconds / 31536000000);
+      const joined = user.createdAt.toDate();
+      const test = new Date(joined);
+      const arr = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "June",
+        "July",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const year = test.getFullYear();
+      const month = arr[test.getMonth()];
+
+      const day = test.getDate();
+      const hour = test.getHours();
+
+      let minutes = test.getMinutes();
+      minutes = minutes === 0 ? "00" : minutes;
 
       return (
         <React.Fragment>
@@ -67,9 +91,15 @@ class UserDetailedPage extends Component {
                       </p>
                     )}
                     <p>
-                      Member Since: <strong>28th March 2018</strong>
+                      Member Since:{" "}
+                      <strong>
+                        {" "}
+                        {`${day} ${month} ${year} ${hour}:${minutes}`}
+                      </strong>
                     </p>
-                    <strong>{user.about} </strong>
+                    <p>
+                      Description of the user: <strong>{user.about} </strong>
+                    </p>
                   </Grid.Column>
                   <Grid.Column width={6}>
                     <Header icon="heart outline" content="Interests" />
@@ -91,14 +121,18 @@ class UserDetailedPage extends Component {
             </Grid.Column>
             <Grid.Column width={4}>
               <Segment>
-                <Button
-                  color="teal"
-                  fluid
-                  basic
-                  as={Link}
-                  to="/settings"
-                  content="Edit Profile"
-                />
+                {auth.uid === user.id ? (
+                  <Button
+                    color="teal"
+                    fluid
+                    basic
+                    as={Link}
+                    to="/settings"
+                    content="Edit Profile"
+                  />
+                ) : (
+                  <Button color="teal" fluid basic as={Link} content="Follow" />
+                )}
               </Segment>
             </Grid.Column>
             <Grid.Column width={12}>
@@ -156,8 +190,10 @@ class UserDetailedPage extends Component {
 }
 const mapStateToProps = (state) => {
   let user;
-  if (Object.keys(state.firestore.ordered).length > 0) {
-    user = state.firestore.ordered.users[0];
+  if (state.firestore.ordered.users) {
+    if (state.firestore.ordered.users.length > 0) {
+      user = state.firestore.ordered.users[0];
+    }
   }
   return {
     user: user,
@@ -167,17 +203,19 @@ const mapStateToProps = (state) => {
 };
 export default withRouter(
   connect(mapStateToProps)(
-    firestoreConnect(({ match }) => [
-      {
-        collection: "users",
-        doc: match.params.id,
-      },
-      {
-        collection: "users",
-        doc: match.params.id,
-        subcollections: [{ collection: "photos" }],
-        storeAs: "photos",
-      },
-    ])(UserDetailedPage)
+    firestoreConnect(({ match }) => {
+      return [
+        {
+          collection: "users",
+          doc: match.params.id,
+        },
+        {
+          collection: "users",
+          doc: match.params.id,
+          subcollections: [{ collection: "photos" }],
+          storeAs: "photos",
+        },
+      ];
+    })(UserDetailedPage)
   )
 );
