@@ -5,7 +5,7 @@ import EventDetailedInfo from "./EventDetailedInfo";
 import EventDetailedChat from "./EventDetailedChat";
 import EventDetailedSidebar from "./EventDetailedSidebar";
 import { withRouter } from "react-router";
-import { firestoreConnect } from "react-redux-firebase";
+import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
 import { connect } from "react-redux";
 import Spinner from "../../Spinner/Spinner";
 
@@ -32,8 +32,10 @@ const mapStateToProps = (state) => {
 };
 export default withRouter(
   connect(mapStateToProps)(
-    firestoreConnect(({ match }) => [
-      { collection: "events", doc: match.params.id, storeAs: "singleEvent" },
-    ])(EventDetailedPage)
+    firebaseConnect(({ match }) => [`event_chat/${match.params.id}`])(
+      firestoreConnect(({ match }) => [
+        { collection: "events", doc: match.params.id, storeAs: "singleEvent" },
+      ])(EventDetailedPage)
+    )
   )
 );

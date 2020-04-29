@@ -540,3 +540,29 @@ export const getUserEvents = (userUid, activeTab) => async (dispatch) => {
     dispatch(loadingStop());
   }
 };
+//CHAT
+export const addEventComment = (eventId, formValues) => async (
+  dispatch,
+  getState,
+  { getFirebase }
+) => {
+  const firebase = getFirebase();
+  const profile = getState().firebase.profile;
+  const user = firebase.auth().currentUser;
+  let newComment = {
+    displayName: profile.displayName,
+    photoURL: profile.photoURL || "/assets/user.png",
+    uid: user.uid,
+    text: formValues.comment,
+    date: Date.now(),
+  };
+  dispatch(loadingStart());
+  try {
+    await firebase.push(`event_chat/${eventId}`, newComment);
+    dispatch(loadingStop());
+  } catch (error) {
+    console.log(error);
+    dispatch(loadingStop());
+    toastr.error("Oops", "Problem adding comment");
+  }
+};

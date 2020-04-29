@@ -1,7 +1,15 @@
 import React from "react";
 import { Segment, Header, Comment, Form, Button } from "semantic-ui-react";
+import EventDetailedChatForm from "./EventDetailedChatForm";
+import { connect } from "react-redux";
+import { withRouter } from "react-router";
+import { Link } from "react-router-dom";
+import formatDistance from "date-fns/formatDistance";
 
-const EventDetailedChat = () => {
+const EventDetailedChat = ({ match, comments }) => {
+  const tryFixDate = (date) => {
+    return formatDistance(date, Date.now());
+  };
   return (
     <React.Fragment>
       <Segment
@@ -16,80 +24,40 @@ const EventDetailedChat = () => {
 
       <Segment attached>
         <Comment.Group>
-          <Comment>
-            <Comment.Avatar src="/assets/user.png" />
-            <Comment.Content>
-              <Comment.Author as="a">Matt</Comment.Author>
-              <Comment.Metadata>
-                <div>Today at 5:42PM</div>
-              </Comment.Metadata>
-              <Comment.Text>How artistic!</Comment.Text>
-              <Comment.Actions>
-                <Comment.Action>Reply</Comment.Action>
-              </Comment.Actions>
-            </Comment.Content>
-          </Comment>
-
-          <Comment>
-            <Comment.Avatar src="/assets/user.png" />
-            <Comment.Content>
-              <Comment.Author as="a">Elliot Fu</Comment.Author>
-              <Comment.Metadata>
-                <div>Yesterday at 12:30AM</div>
-              </Comment.Metadata>
-              <Comment.Text>
-                <p>
-                  This has been very useful for my research. Thanks as well!
-                </p>
-              </Comment.Text>
-              <Comment.Actions>
-                <Comment.Action>Reply</Comment.Action>
-              </Comment.Actions>
-            </Comment.Content>
-            <Comment.Group>
-              <Comment>
-                <Comment.Avatar src="/assets/user.png" />
+          {comments &&
+            comments.map((comment) => (
+              <Comment key={comment.date}>
+                <Comment.Avatar src={comment.photoURL || "/assets/user.png"} />
                 <Comment.Content>
-                  <Comment.Author as="a">Jenny Hess</Comment.Author>
+                  <Comment.Author as={Link} to={`/profile/${comment.uid}`}>
+                    {comment.displayName}
+                  </Comment.Author>
                   <Comment.Metadata>
-                    <div>Just now</div>
+                    <div>{tryFixDate(comment.date)} ago</div>
                   </Comment.Metadata>
-                  <Comment.Text>Elliot you are always so right :)</Comment.Text>
+                  <Comment.Text>{comment.text} </Comment.Text>
                   <Comment.Actions>
                     <Comment.Action>Reply</Comment.Action>
                   </Comment.Actions>
                 </Comment.Content>
               </Comment>
-            </Comment.Group>
-          </Comment>
+            ))}
 
-          <Comment>
-            <Comment.Avatar src="/assets/user.png" />
-            <Comment.Content>
-              <Comment.Author as="a">Joe Henderson</Comment.Author>
-              <Comment.Metadata>
-                <div>5 days ago</div>
-              </Comment.Metadata>
-              <Comment.Text>Dude, this is awesome. Thanks so much</Comment.Text>
-              <Comment.Actions>
-                <Comment.Action>Reply</Comment.Action>
-              </Comment.Actions>
-            </Comment.Content>
-          </Comment>
-
-          <Form reply>
-            <Form.TextArea />
-            <Button
-              content="Add Reply"
-              labelPosition="left"
-              icon="edit"
-              primary
-            />
-          </Form>
+          <EventDetailedChatForm eventId={match.params.id} />
         </Comment.Group>
       </Segment>
     </React.Fragment>
   );
 };
-
-export default EventDetailedChat;
+const mapStateToProps = (state, ownProps) => {
+  let comments;
+  if (state.firebase.ordered.event_chat) {
+    comments = state.firebase.ordered.event_chat[ownProps.match.params.id].map(
+      (comment) => comment.value
+    );
+  }
+  return {
+    comments: comments,
+  };
+};
+export default withRouter(connect(mapStateToProps)(EventDetailedChat));
