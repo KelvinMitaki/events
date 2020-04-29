@@ -61,11 +61,12 @@ const EventDetailedHeader = ({
         };
       });
       const isGoing = newUser.some((u) => u.id === uid);
+
       return (
         <Segment.Group key={event}>
           <Segment basic attached="top" style={{ padding: "0" }}>
             <Image
-              src="/assets/categoryImages/drinks.jpg"
+              src={`/assets/categoryImages/${event.category}.jpg`}
               fluid
               style={eventImageStyle}
             />

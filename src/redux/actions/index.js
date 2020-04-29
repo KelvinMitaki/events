@@ -488,3 +488,55 @@ export const getEventsForDashboard = (lastEvent) => async (
     dispatch(loadingStop());
   }
 };
+
+export const getUserEvents = (userUid, activeTab) => async (dispatch) => {
+  dispatch(loadingStart());
+  const firestore = firebase.firestore();
+  const today = new Date();
+  const eventsRef = firestore.collection("event_attendee");
+  let query;
+  switch (activeTab) {
+    case 1: //PAST EVENTS
+      query = eventsRef
+        .where("userUid", "==", userUid)
+        .where("eventDate", "<=", today)
+        .orderBy("eventDate", "desc");
+      break;
+    case 2: //FUTURE EVENTS
+      query = eventsRef
+        .where("userUid", "==", userUid)
+        .where("eventDate", ">=", today)
+        .orderBy("eventDate");
+      break;
+    case 3: //HOSTED EVENTS
+      query = eventsRef
+        .where("userUid", "==", userUid)
+        .where("host", "==", true)
+        .orderBy("eventDate", "desc");
+      break;
+
+    default:
+      query = eventsRef
+        .where("userUid", "==", userUid)
+        .orderBy("eventDate", "desc");
+      break;
+  }
+  try {
+    const querySnapshot = await query.get();
+
+    const events = [];
+    for (let i = 0; i < querySnapshot.docs.length; i++) {
+      let evt = await firestore
+        .collection("events")
+        .doc(querySnapshot.docs[i].data().eventId)
+        .get();
+      events.push({ ...evt.data(), id: evt.id });
+    }
+
+    dispatch(fetchEvents(events));
+    dispatch(loadingStop());
+  } catch (error) {
+    console.log(error);
+    dispatch(loadingStop());
+  }
+};

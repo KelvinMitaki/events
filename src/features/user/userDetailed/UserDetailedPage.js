@@ -16,10 +16,51 @@ import { Link, withRouter } from "react-router-dom";
 import { firestoreConnect } from "react-redux-firebase";
 import LazyLoad from "react-lazyload";
 import Spinner from "../../Spinner/Spinner";
+import { getUserEvents } from "../../../redux/actions";
 
 class UserDetailedPage extends Component {
+  async componentDidMount() {
+    await this.props.getUserEvents(this.props.match.params.id);
+  }
+  setCurrentDate = (joined) => {
+    const test = new Date(joined);
+    const arr = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "June",
+      "July",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const year = test.getFullYear();
+    const month = arr[test.getMonth()];
+
+    const day = test.getDate();
+    const hour = test.getHours();
+
+    let minutes = test.getMinutes();
+    minutes = minutes === 0 ? "00" : minutes;
+    return (
+      <React.Fragment>
+        {`${day} ${month} ${year} ${hour}:${minutes}`}
+      </React.Fragment>
+    );
+  };
   render() {
-    const { user, photos, auth, requesting } = this.props;
+    const {
+      user,
+      photos,
+      auth,
+      requesting,
+      events,
+      eventsLoading,
+    } = this.props;
     const loading = Object.values(requesting).some((req) => req === true);
     if (loading) return <Spinner />;
     if (user) {
@@ -27,29 +68,6 @@ class UserDetailedPage extends Component {
         new Date().getTime() - Date.parse(user.dateOfBirth);
       const years = Math.floor(currentmilliSeconds / 31536000000);
       const joined = user.createdAt.toDate();
-      const test = new Date(joined);
-      const arr = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "June",
-        "July",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-      const year = test.getFullYear();
-      const month = arr[test.getMonth()];
-
-      const day = test.getDate();
-      const hour = test.getHours();
-
-      let minutes = test.getMinutes();
-      minutes = minutes === 0 ? "00" : minutes;
 
       return (
         <React.Fragment>
@@ -102,10 +120,7 @@ class UserDetailedPage extends Component {
                     )}
                     <p>
                       Member Since:{" "}
-                      <strong>
-                        {" "}
-                        {`${day} ${month} ${year} ${hour}:${minutes}`}
-                      </strong>
+                      <strong> {this.setCurrentDate(joined)}</strong>
                     </p>
                     <p>
                       Description of the user: <strong>{user.about} </strong>
@@ -163,7 +178,7 @@ class UserDetailedPage extends Component {
               </Segment>
             </Grid.Column>
             <Grid.Column width={12}>
-              <Segment attached>
+              <Segment attached loading={eventsLoading}>
                 <Header icon="calendar" content="Events" />
                 <Menu secondary pointing>
                   <Menu.Item name="All Events" active />
@@ -173,25 +188,29 @@ class UserDetailedPage extends Component {
                 </Menu>
 
                 <Card.Group itemsPerRow={5}>
-                  <Card>
-                    <Image src={"/assets/categoryImages/drinks.jpg"} />
-                    <Card.Content>
-                      <Card.Header textAlign="center">Event Title</Card.Header>
-                      <Card.Meta textAlign="center">
-                        28th March 2018 at 10:00 PM
-                      </Card.Meta>
-                    </Card.Content>
-                  </Card>
-
-                  <Card>
-                    <Image src={"/assets/categoryImages/drinks.jpg"} />
-                    <Card.Content>
-                      <Card.Header textAlign="center">Event Title</Card.Header>
-                      <Card.Meta textAlign="center">
-                        28th March 2018 at 10:00 PM
-                      </Card.Meta>
-                    </Card.Content>
-                  </Card>
+                  {events &&
+                    events.map((event) => {
+                      const eventDate = new Date(event.date.seconds);
+                      return (
+                        <Card
+                          as={Link}
+                          to={`/events/${event.id}`}
+                          key={event.id}
+                        >
+                          <Image
+                            src={`/assets/categoryImages/${event.category}.jpg`}
+                          />
+                          <Card.Content>
+                            <Card.Header textAlign="center">
+                              {event.title}
+                            </Card.Header>
+                            <Card.Meta textAlign="center">
+                              {this.setCurrentDate(eventDate)}
+                            </Card.Meta>
+                          </Card.Content>
+                        </Card>
+                      );
+                    })}
                 </Card.Group>
               </Segment>
             </Grid.Column>
@@ -215,10 +234,12 @@ const mapStateToProps = (state) => {
     photos: state.firestore.ordered.photos,
     auth: state.firebase.auth,
     requesting: state.firestore.status.requesting,
+    events: state.eventsReducer.events,
+    eventsLoading: state.eventsReducer.loading,
   };
 };
 export default withRouter(
-  connect(mapStateToProps)(
+  connect(mapStateToProps, { getUserEvents })(
     firestoreConnect(({ match }) => {
       return [
         {
