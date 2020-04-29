@@ -10,6 +10,7 @@ import {
   List,
   Menu,
   Segment,
+  Tab,
 } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { Link, withRouter } from "react-router-dom";
@@ -17,6 +18,13 @@ import { firestoreConnect } from "react-redux-firebase";
 import LazyLoad from "react-lazyload";
 import Spinner from "../../Spinner/Spinner";
 import { getUserEvents } from "../../../redux/actions";
+
+const panes = [
+  { menuItem: "All Events", pane: { key: "allEvents" } },
+  { menuItem: "Past Events", pane: { key: "pastEvents" } },
+  { menuItem: "Future Events", pane: { key: "futureEvents" } },
+  { menuItem: "Hosting", pane: { key: "hosted" } },
+];
 
 class UserDetailedPage extends Component {
   async componentDidMount() {
@@ -52,6 +60,7 @@ class UserDetailedPage extends Component {
       </React.Fragment>
     );
   };
+
   render() {
     const {
       user,
@@ -180,17 +189,23 @@ class UserDetailedPage extends Component {
             <Grid.Column width={12}>
               <Segment attached loading={eventsLoading}>
                 <Header icon="calendar" content="Events" />
-                <Menu secondary pointing>
-                  <Menu.Item name="All Events" active />
-                  <Menu.Item name="Past Events" />
-                  <Menu.Item name="Future Events" />
-                  <Menu.Item name="Events Hosted" />
-                </Menu>
+                <Tab
+                  onTabChange={(e, data) =>
+                    this.props.getUserEvents(
+                      this.props.match.params.id,
+                      data.activeIndex
+                    )
+                  }
+                  panes={panes}
+                  menu={{ secondary: true, pointing: true }}
+                />
+                <br />
 
                 <Card.Group itemsPerRow={5}>
                   {events &&
                     events.map((event) => {
-                      const eventDate = new Date(event.date.seconds);
+                      const eventDate = new Date(event.date.seconds * 1000);
+
                       return (
                         <Card
                           as={Link}
