@@ -10,11 +10,11 @@ import {
   CHANGE_OPEN_STATE,
   LOADING_START,
   LOADING_STOP,
+  FETCH_EVENTS,
 } from "./utils/ActionConstants";
-import { eventsData } from "../EventsData/EventsData";
 
 const INITIAL_STATE = {
-  events: eventsData,
+  events: [],
   isOpen: false,
   selectedEvent: null,
   loading: false,
@@ -58,6 +58,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: true };
     case LOADING_STOP:
       return { ...state, loading: false };
+    case FETCH_EVENTS:
+      return { ...state, events: action.payload };
     default:
       return state;
   }

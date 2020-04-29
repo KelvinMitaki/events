@@ -1,22 +1,47 @@
 import React, { Component } from "react";
 import EventList from "../EventList/EventList";
 
-import { Grid } from "semantic-ui-react";
+import { Grid, Button } from "semantic-ui-react";
 import { connect } from "react-redux";
-import { createEventButton } from "../../../redux/actions";
+import {
+  createEventButton,
+  getEventsForDashboard,
+} from "../../../redux/actions";
 import EventActivity from "../EventActivity/EventActivity";
-import { firestoreConnect } from "react-redux-firebase";
 import Spinner from "../../Spinner/Spinner";
 
 export class EventDashboard extends Component {
+  state = {
+    moreEvents: false,
+  };
+  async componentDidMount() {
+    const querySnapshot = await this.props.getEventsForDashboard();
+    if (querySnapshot && querySnapshot.docs && querySnapshot.docs.length > 1) {
+      this.setState({ moreEvents: true });
+    }
+  }
+  getNextEvents = async () => {
+    const { events } = this.props;
+    const lastEvent = events && events[events.length - 1];
+    const querySnapshot = await this.props.getEventsForDashboard(lastEvent);
+    if (querySnapshot && querySnapshot.docs && querySnapshot.docs.length <= 1) {
+      this.setState({ moreEvents: false });
+    }
+  };
   render() {
-    const { requesting } = this.props;
-    const loading = Object.values(requesting).some((req) => req === true);
+    const { loading, events } = this.props;
+
     if (loading) return <Spinner />;
     return (
       <Grid>
         <Grid.Column width={10}>
-          <EventList />
+          <EventList events={events} />
+          <Button
+            onClick={this.getNextEvents}
+            disabled={!this.state.moreEvents}
+            content="More"
+            color="green"
+          />
         </Grid.Column>
         <Grid.Column width={6}>
           <EventActivity />
@@ -27,9 +52,11 @@ export class EventDashboard extends Component {
 }
 const mapStateToProps = (state) => {
   return {
-    requesting: state.firestore.status.requesting,
+    loading: state.eventsReducer.loading,
+    events: state.eventsReducer.events,
   };
 };
-export default connect(mapStateToProps, { createEventButton })(
-  firestoreConnect([{ collection: "events" }])(EventDashboard)
-);
+export default connect(mapStateToProps, {
+  createEventButton,
+  getEventsForDashboard,
+})(EventDashboard);

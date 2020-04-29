@@ -17,7 +17,10 @@ export class EventListItem extends Component {
       };
     });
 
-    const test = event.date.toDate();
+    const test = event.date.seconds;
+    let t = new Date(1970, 0, 1);
+    t.setSeconds(test);
+
     const arr = [
       "Jan",
       "Feb",
@@ -32,13 +35,13 @@ export class EventListItem extends Component {
       "Nov",
       "Dec",
     ];
-    const year = test.getFullYear();
-    const month = arr[test.getMonth()];
+    const year = t.getFullYear();
+    const month = arr[t.getMonth()];
 
-    const day = test.getDate();
-    const hour = test.getHours();
+    const day = t.getDate();
+    const hour = t.getHours();
 
-    let minutes = test.getMinutes();
+    let minutes = t.getMinutes();
     minutes = minutes === 0 ? "00" : minutes;
 
     return (

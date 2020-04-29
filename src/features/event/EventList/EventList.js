@@ -15,10 +15,4 @@ export class EventList extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    events: state.firestore.ordered.events,
-  };
-};
-
-export default connect(mapStateToProps)(EventList);
+export default connect(null)(EventList);

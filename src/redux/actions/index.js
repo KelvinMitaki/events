@@ -13,12 +13,21 @@ import {
   LOGOUT_USER,
   LOADING_START,
   LOADING_STOP,
+  FETCH_EVENTS,
 } from "../reducers/utils/ActionConstants";
 import { toastr } from "react-redux-toastr";
 import { SubmissionError, reset } from "redux-form";
 import cuid from "cuid";
+import firebase from "../../app/config/firebase";
 
 //EVENTS
+
+export const fetchEvents = (events) => {
+  return {
+    type: FETCH_EVENTS,
+    payload: events,
+  };
+};
 
 const createNewEvent = (user, photoURL, event) => {
   return {
@@ -429,5 +438,53 @@ export const cancelGoingToEvent = (event) => async (
   } catch (error) {
     console.log(error);
     toastr.error("Oops!!!", "Something went wrong when cancelling the event");
+  }
+};
+
+export const getEventsForDashboard = (lastEvent) => async (
+  dispatch,
+  getState
+) => {
+  let today = new Date();
+  const firestore = firebase.firestore();
+  const eventsRef = firestore.collection("events");
+  dispatch(loadingStart());
+  try {
+    let startAfter =
+      lastEvent &&
+      (await firestore.collection("events").doc(lastEvent.id).get());
+
+    let query;
+    lastEvent
+      ? (query = eventsRef
+          // .where("date", ">=", today)
+          .orderBy("date")
+          .startAfter(startAfter)
+          .limit(2))
+      : (query = eventsRef
+          // .where("date", ">=", today)
+          .orderBy("date")
+          .limit(2));
+
+    const querySnapshot = await query.get();
+    if (querySnapshot.docs.length === 0) {
+      dispatch(loadingStop());
+      return querySnapshot;
+    }
+    let events = [];
+
+    for (let i = 0; i < querySnapshot.docs.length; i++) {
+      let evt = {
+        ...querySnapshot.docs[i].data(),
+        id: querySnapshot.docs[i].id,
+      };
+      events.push(evt);
+    }
+    dispatch(fetchEvents(events));
+    dispatch(loadingStop());
+    return querySnapshot;
+  } catch (error) {
+    console.log(error);
+    dispatch(loadingStop());
   }
 };

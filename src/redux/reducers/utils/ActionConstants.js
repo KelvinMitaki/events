@@ -13,3 +13,4 @@ export const LOGIN_USER = "LOGIN_USER";
 export const LOGOUT_USER = "LOGOUT_USER";
 export const LOADING_START = "LOADING_START";
 export const LOADING_STOP = "LOADING_STOP";
+export const FETCH_EVENTS = "FETCH_EVENTS";
