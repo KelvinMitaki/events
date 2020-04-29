@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import EventList from "../EventList/EventList";
 
-import { Grid, Button } from "semantic-ui-react";
+import { Grid, Button, Loader } from "semantic-ui-react";
 import { connect } from "react-redux";
 import {
   createEventButton,
@@ -13,13 +13,22 @@ import Spinner from "../../Spinner/Spinner";
 export class EventDashboard extends Component {
   state = {
     moreEvents: false,
+    initialLoading: true,
+    loadedEvents: [],
   };
   async componentDidMount() {
     const querySnapshot = await this.props.getEventsForDashboard();
     if (querySnapshot && querySnapshot.docs && querySnapshot.docs.length > 1) {
-      this.setState({ moreEvents: true });
+      this.setState({ moreEvents: true, initialLoading: false });
     }
   }
+  componentDidUpdate = (prevProps) => {
+    if (this.props.events !== prevProps.events) {
+      this.setState({
+        loadedEvents: [...this.state.loadedEvents, ...this.props.events],
+      });
+    }
+  };
   getNextEvents = async () => {
     const { events } = this.props;
     const lastEvent = events && events[events.length - 1];
@@ -29,22 +38,24 @@ export class EventDashboard extends Component {
     }
   };
   render() {
-    const { loading, events } = this.props;
-
-    if (loading) return <Spinner />;
+    const { loading } = this.props;
+    const { loadedEvents, moreEvents } = this.state;
+    if (this.state.initialLoading) return <Spinner />;
     return (
       <Grid>
         <Grid.Column width={10}>
-          <EventList events={events} />
-          <Button
-            onClick={this.getNextEvents}
-            disabled={!this.state.moreEvents}
-            content="More"
-            color="green"
+          <EventList
+            events={loadedEvents}
+            getNextEvents={this.getNextEvents}
+            loading={loading}
+            moreEvents={moreEvents}
           />
         </Grid.Column>
         <Grid.Column width={6}>
           <EventActivity />
+        </Grid.Column>
+        <Grid.Column width={10}>
+          <Loader active={loading} />
         </Grid.Column>
       </Grid>
     );
