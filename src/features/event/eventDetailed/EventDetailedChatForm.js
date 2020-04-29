@@ -7,10 +7,18 @@ import { addEventComment } from "../../../redux/actions";
 
 class EventDetailedChatForm extends Component {
   handleCommentSubmit = (formValues) => {
-    const { eventId, reset, addEventComment } = this.props;
-    addEventComment(eventId, formValues);
-
+    const {
+      eventId,
+      reset,
+      addEventComment,
+      handleCloseReplyForm,
+      parentId,
+    } = this.props;
+    addEventComment(eventId, formValues, parentId);
     reset();
+    if (parentId !== 0) {
+      handleCloseReplyForm();
+    }
   };
   render() {
     return (
@@ -33,5 +41,5 @@ const mapStateToProps = (state) => {
   };
 };
 export default connect(mapStateToProps, { addEventComment })(
-  reduxForm({ form: "EventDetailedChatForm" })(EventDetailedChatForm)
+  reduxForm({ Fields: "comment" })(EventDetailedChatForm)
 );

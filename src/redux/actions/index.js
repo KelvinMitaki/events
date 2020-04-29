@@ -541,7 +541,7 @@ export const getUserEvents = (userUid, activeTab) => async (dispatch) => {
   }
 };
 //CHAT
-export const addEventComment = (eventId, formValues) => async (
+export const addEventComment = (eventId, formValues, parentId) => async (
   dispatch,
   getState,
   { getFirebase }
@@ -550,6 +550,7 @@ export const addEventComment = (eventId, formValues) => async (
   const profile = getState().firebase.profile;
   const user = firebase.auth().currentUser;
   let newComment = {
+    parentId: parentId,
     displayName: profile.displayName,
     photoURL: profile.photoURL || "/assets/user.png",
     uid: user.uid,
