@@ -1,10 +1,14 @@
 import React from "react";
-import { Header, Segment, Feed } from "semantic-ui-react";
+import { Header, Segment, Feed, Sticky } from "semantic-ui-react";
 import EventActivityItem from "./EventActivityItem";
 
-const EventActivity = ({ activities }) => {
+const EventActivity = ({ activities, createContextRef }) => {
   return (
-    <React.Fragment>
+    <Sticky
+      context={createContextRef}
+      offset={100}
+      styleElement={{ zIndex: 0 }}
+    >
       <Header attached="top" content="Recent Activity" />
       <Segment attached>
         <Feed>
@@ -13,7 +17,7 @@ const EventActivity = ({ activities }) => {
           ))}
         </Feed>
       </Segment>
-    </React.Fragment>
+    </Sticky>
   );
 };
 
