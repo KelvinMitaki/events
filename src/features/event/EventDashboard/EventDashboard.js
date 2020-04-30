@@ -9,6 +9,7 @@ import {
 } from "../../../redux/actions";
 import EventActivity from "../EventActivity/EventActivity";
 import Spinner from "../../Spinner/Spinner";
+import { firestoreConnect } from "react-redux-firebase";
 
 export class EventDashboard extends Component {
   state = {
@@ -38,7 +39,8 @@ export class EventDashboard extends Component {
     }
   };
   render() {
-    const { loading } = this.props;
+    const { loading, activity } = this.props;
+
     const { loadedEvents, moreEvents } = this.state;
     if (this.state.initialLoading) return <Spinner />;
     return (
@@ -52,7 +54,7 @@ export class EventDashboard extends Component {
           />
         </Grid.Column>
         <Grid.Column width={6}>
-          <EventActivity />
+          {activity && <EventActivity activities={activity} />}
         </Grid.Column>
         <Grid.Column width={10}>
           <Loader active={loading} />
@@ -65,9 +67,14 @@ const mapStateToProps = (state) => {
   return {
     loading: state.eventsReducer.loading,
     events: state.eventsReducer.events,
+    activity: state.firestore.ordered.activity,
   };
 };
 export default connect(mapStateToProps, {
   createEventButton,
   getEventsForDashboard,
-})(EventDashboard);
+})(
+  firestoreConnect([
+    { collection: "activity", orderBy: ["timestamp", "desc"], limit: 5 },
+  ])(EventDashboard)
+);
