@@ -13,6 +13,7 @@ import { Route, Switch, withRouter } from "react-router";
 import { changeOpenState } from "../../redux/actions";
 import { connect } from "react-redux";
 import ModalManager from "../../features/modals/ModalManager";
+import { UserIsAuthenticated } from "../../features/auth/authWrapper/authWrapper";
 
 export class App extends Component {
   componentDidMount() {
@@ -36,16 +37,23 @@ export class App extends Component {
                     path="/events/:id"
                     render={() => <EventDetailedPage />}
                   />
-                  <Route exact path="/people" component={PeopleDashboard} />
+                  <Route
+                    exact
+                    path="/people"
+                    component={UserIsAuthenticated(PeopleDashboard)}
+                  />
                   <Route
                     exact
                     path="/profile/:id"
-                    component={UserDetailedPage}
+                    component={UserIsAuthenticated(UserDetailedPage)}
                   />
-                  <Route path="/settings" component={SettingsDashboard} />
+                  <Route
+                    path="/settings"
+                    component={UserIsAuthenticated(SettingsDashboard)}
+                  />
                   <Route
                     path={["/createEvent", "/manage/:id"]}
-                    component={EventForm}
+                    component={UserIsAuthenticated(EventForm)}
                   />
                 </Switch>
               </Container>

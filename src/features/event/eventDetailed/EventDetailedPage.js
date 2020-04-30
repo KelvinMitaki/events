@@ -9,13 +9,15 @@ import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
 import { connect } from "react-redux";
 import Spinner from "../../Spinner/Spinner";
 
-const EventDetailedPage = ({ requesting }) => {
+const EventDetailedPage = ({ requesting, auth }) => {
   const loading = Object.values(requesting).some((req) => req === true);
+  const authenticated = auth.isLoaded && !auth.isEmpty;
+
   if (loading) return <Spinner />;
   return (
     <Grid>
       <Grid.Column width={10}>
-        <EventDetailedHeader />
+        <EventDetailedHeader authenticated={authenticated} />
         <EventDetailedInfo />
         <EventDetailedChat />
       </Grid.Column>
@@ -28,6 +30,7 @@ const EventDetailedPage = ({ requesting }) => {
 const mapStateToProps = (state) => {
   return {
     requesting: state.firestore.status.requesting,
+    auth: state.firebase.auth,
   };
 };
 export default withRouter(

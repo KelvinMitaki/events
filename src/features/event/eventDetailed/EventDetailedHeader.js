@@ -6,6 +6,7 @@ import {
   manageEvent,
   goingToEvent,
   cancelGoingToEvent,
+  openModal,
 } from "../../../redux/actions";
 import { Link } from "react-router-dom";
 
@@ -21,6 +22,7 @@ const eventImageTextStyle = {
   height: "auto",
   color: "white",
 };
+
 const EventDetailedHeader = ({
   manageEvent,
   history,
@@ -28,7 +30,10 @@ const EventDetailedHeader = ({
   uid,
   goingToEvent,
   cancelGoingToEvent,
+  authenticated,
+  openModal,
 }) => {
+  console.log(authenticated);
   if (singleEvent) {
     return singleEvent.map((event) => {
       const test = new Date(event.date.toDate());
@@ -100,12 +105,19 @@ const EventDetailedHeader = ({
           <Segment attached="bottom" clearing>
             {uid !== event.hostUid && (
               <React.Fragment>
-                {isGoing ? (
+                {isGoing && (
                   <Button onClick={() => cancelGoingToEvent(event)}>
                     Cancel My Place
                   </Button>
-                ) : (
+                )}
+                {!isGoing && authenticated && (
                   <Button onClick={() => goingToEvent(event)} color="teal">
+                    JOIN THIS EVENT
+                  </Button>
+                )}
+
+                {!authenticated && (
+                  <Button onClick={() => openModal("UnAuthModal")} color="teal">
                     JOIN THIS EVENT
                   </Button>
                 )}
@@ -138,7 +150,10 @@ const mapStateToProps = (state) => {
   };
 };
 export default withRouter(
-  connect(mapStateToProps, { manageEvent, goingToEvent, cancelGoingToEvent })(
-    EventDetailedHeader
-  )
+  connect(mapStateToProps, {
+    manageEvent,
+    goingToEvent,
+    cancelGoingToEvent,
+    openModal,
+  })(EventDetailedHeader)
 );
