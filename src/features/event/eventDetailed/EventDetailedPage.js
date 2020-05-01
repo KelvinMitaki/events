@@ -8,12 +8,15 @@ import { withRouter } from "react-router";
 import { firestoreConnect, firebaseConnect } from "react-redux-firebase";
 import { connect } from "react-redux";
 import Spinner from "../../Spinner/Spinner";
+import NotFound from "../../../app/layout/NotFound";
 
-const EventDetailedPage = ({ requesting, auth }) => {
+const EventDetailedPage = ({ requesting, auth, ordered }) => {
   const loading = Object.values(requesting).some((req) => req === true);
   const authenticated = auth.isLoaded && !auth.isEmpty;
 
   if (loading) return <Spinner />;
+  if (ordered.singleEvent && ordered.singleEvent.length === 0)
+    return <NotFound />;
   return (
     <Grid>
       <Grid.Column width={10}>
@@ -31,6 +34,7 @@ const mapStateToProps = (state) => {
   return {
     requesting: state.firestore.status.requesting,
     auth: state.firebase.auth,
+    ordered: state.firestore.ordered,
   };
 };
 export default withRouter(

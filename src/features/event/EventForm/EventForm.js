@@ -20,6 +20,7 @@ import {
 } from "revalidate";
 import DateInput from "../form/DateInput";
 import { withFirestore } from "react-redux-firebase";
+import Spinner from "../../Spinner/Spinner";
 
 const validate = combineValidators({
   title: isRequired({ message: "The event title is required" }),
@@ -57,7 +58,7 @@ export class EventForm extends Component {
   }
   onSubmit = async (event) => {
     if (event.id) {
-      this.props.updateEvent(event);
+      await this.props.updateEvent(event);
       this.props.history.push(`/events/${event.id}`);
     } else {
       const createdEvent = await this.props.createEvent(event);
@@ -72,6 +73,7 @@ export class EventForm extends Component {
       pristine,
       event,
       cancelEventToggle,
+      loading,
     } = this.props;
     if (event) {
       return (
@@ -118,6 +120,7 @@ export class EventForm extends Component {
                 />
 
                 <Button
+                  loading={loading}
                   disabled={pristine || submitting || invalid}
                   positive
                   type="submit"
@@ -155,7 +158,7 @@ export class EventForm extends Component {
         </Grid>
       );
     } else {
-      return null;
+      return <Spinner />;
     }
   }
 }
@@ -170,6 +173,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     initialValues: event,
     event: state.firestore.ordered.events,
+    loading: state.eventsReducer.loading,
   };
 };
 const formWrapper = reduxForm({

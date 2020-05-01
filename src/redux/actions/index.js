@@ -1,7 +1,4 @@
 import {
-  CREATE_EVENT,
-  UPDATE_EVENT,
-  DELETE_EVENT,
   VIEW_SELECTED_EVENT,
   ON_CANCEL_CLICK,
   CREATE_EVENT_BUTTON,
@@ -10,10 +7,10 @@ import {
   CHANGE_OPEN_STATE,
   OPEN_MODAL,
   CLOSE_MODAL,
-  LOGOUT_USER,
   LOADING_START,
   LOADING_STOP,
   FETCH_EVENTS,
+  FETCH_USER_EVENTS,
 } from "../reducers/utils/ActionConstants";
 import { toastr } from "react-redux-toastr";
 import { SubmissionError, reset } from "redux-form";
@@ -28,7 +25,12 @@ export const fetchEvents = (events) => {
     payload: events,
   };
 };
-
+export const fetchUserEvents = (userEvents) => {
+  return {
+    type: FETCH_USER_EVENTS,
+    payload: userEvents,
+  };
+};
 const createNewEvent = (user, photoURL, event) => {
   return {
     ...event,
@@ -60,6 +62,7 @@ export const createEvent = (event) => async (
     getState().firebase.profile.photoURL ||
     getState().firebase.profile.avatarUrl;
   const newEvent = createNewEvent(user, photoURL, event);
+  dispatch(loadingStart());
   try {
     const createdEvent = await firestore.add("events", newEvent);
     await firestore.set(`event_attendee/${createdEvent.id}_${user.uid}`, {
@@ -68,9 +71,11 @@ export const createEvent = (event) => async (
       eventDate: event.date,
       host: true,
     });
+    dispatch(loadingStop());
     toastr.success("Success!", "Event has been created");
     return createdEvent;
   } catch (error) {
+    dispatch(loadingStop());
     toastr.error("Oops!!!", "Something went wrong");
   }
 };
@@ -78,11 +83,14 @@ export const createEvent = (event) => async (
 export const updateEvent = (newEvent) => {
   return async (dispatch, getState, { getFirestore }) => {
     const firestore = getFirestore();
+    dispatch(loadingStart());
     try {
       await firestore.update(`/events/${newEvent.id}`, newEvent);
+      dispatch(loadingStop());
       toastr.success("Success!", "Event has been updated");
     } catch (error) {
       console.log(error);
+      dispatch(loadingStop());
       toastr.error("Oops!!!", "Something went wrong");
     }
   };
@@ -107,13 +115,6 @@ export const cancelEventToggle = (cancelled, eventId) => async (
   } catch (error) {
     console.log(error);
   }
-};
-
-export const deleteEvent = (id) => {
-  return {
-    type: DELETE_EVENT,
-    payload: id,
-  };
 };
 
 export const viewSelectedEvent = (event) => {
@@ -193,24 +194,21 @@ export const loadingStop = () => {
 
 export const logInUser = (creds) => {
   return async (dispatch, getState, { getFirebase }) => {
+    dispatch(loadingStart());
     try {
       const firebase = getFirebase();
       await firebase
         .auth()
         .signInWithEmailAndPassword(creds.email, creds.password);
+      dispatch(loadingStop());
       dispatch(closeModal());
     } catch (error) {
       console.log(error);
+      dispatch(loadingStop());
       throw new SubmissionError({
         _error: error.message,
       });
     }
-  };
-};
-
-export const logOutUser = () => {
-  return {
-    type: LOGOUT_USER,
   };
 };
 
@@ -457,14 +455,11 @@ export const getEventsForDashboard = (lastEvent) => async (
     let query;
     lastEvent
       ? (query = eventsRef
-          // .where("date", ">=", today)
+          .where("date", ">=", today)
           .orderBy("date")
           .startAfter(startAfter)
           .limit(2))
-      : (query = eventsRef
-          // .where("date", ">=", today)
-          .orderBy("date")
-          .limit(2));
+      : (query = eventsRef.where("date", ">=", today).orderBy("date").limit(2));
 
     const querySnapshot = await query.get();
     if (querySnapshot.docs.length === 0) {
@@ -533,7 +528,7 @@ export const getUserEvents = (userUid, activeTab) => async (dispatch) => {
       events.push({ ...evt.data(), id: evt.id });
     }
 
-    dispatch(fetchEvents(events));
+    dispatch(fetchUserEvents(events));
     dispatch(loadingStop());
   } catch (error) {
     console.log(error);

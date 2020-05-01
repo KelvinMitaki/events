@@ -2,8 +2,6 @@ import React, { Component } from "react";
 import EventListAttendee from "./EventListAttendee";
 
 import { Segment, Item, List, Button, Icon, Label } from "semantic-ui-react";
-import { connect } from "react-redux";
-import { deleteEvent } from "../../../redux/actions";
 import { Link } from "react-router-dom";
 
 export class EventListItem extends Component {
@@ -107,4 +105,4 @@ export class EventListItem extends Component {
   }
 }
 
-export default connect(null, { deleteEvent })(EventListItem);
+export default EventListItem;

@@ -21,10 +21,13 @@ class EventDetailedChatForm extends Component {
     }
   };
   render() {
+    const { isLoaded, isEmpty } = this.props.auth;
+    const disable = isLoaded && isEmpty;
     return (
       <Form onSubmit={this.props.handleSubmit(this.handleCommentSubmit)}>
         <Field name="comment" type="text" component={TextArea} rows={2} />
         <Button
+          disabled={disable}
           loading={this.props.loading}
           content="Add Reply"
           labelPosition="left"
@@ -38,6 +41,7 @@ class EventDetailedChatForm extends Component {
 const mapStateToProps = (state) => {
   return {
     loading: state.eventsReducer.loading,
+    auth: state.firebase.auth,
   };
 };
 export default connect(mapStateToProps, { addEventComment })(

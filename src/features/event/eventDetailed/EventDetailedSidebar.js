@@ -5,6 +5,14 @@ import { withRouter } from "react-router";
 import { Link } from "react-router-dom";
 
 const EventDetailedSidebar = ({ singleEvent }) => {
+  const test =
+    singleEvent &&
+    singleEvent.attendees &&
+    Object.values(singleEvent.attendees).map((attendee) => attendee);
+  const host = test && test.find((attendee) => attendee.host);
+  const noHost = test && test.filter((attendee) => !attendee.host);
+  const newAttendees = host && test && [host, ...noHost];
+
   if (singleEvent) {
     return (
       <Fragment>
@@ -25,8 +33,8 @@ const EventDetailedSidebar = ({ singleEvent }) => {
         </Segment>
         <Segment attached>
           <Item.Group divided>
-            {singleEvent.attendees &&
-              Object.values(singleEvent.attendees).map((attendee) => {
+            {newAttendees &&
+              newAttendees.map((attendee) => {
                 return (
                   <Item
                     key={attendee.displayName}

@@ -1,5 +1,5 @@
 import React from "react";
-import { Segment, Image, Header, Item, Button } from "semantic-ui-react";
+import { Segment, Image, Header, Item, Button, Label } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import {
@@ -33,7 +33,6 @@ const EventDetailedHeader = ({
   authenticated,
   openModal,
 }) => {
-  console.log(authenticated);
   if (singleEvent) {
     return singleEvent.map((event) => {
       const test = new Date(event.date.toDate());
@@ -66,6 +65,37 @@ const EventDetailedHeader = ({
         };
       });
       const isGoing = newUser.some((u) => u.id === uid);
+      let eventCheck;
+
+      if (!isGoing && authenticated && !event.cancelled) {
+        eventCheck = (
+          <Button onClick={() => goingToEvent(event)} color="teal">
+            JOIN THIS EVENT
+          </Button>
+        );
+      } else if (!isGoing && authenticated && event.cancelled) {
+        eventCheck = (
+          <Label
+            size="large"
+            color="red"
+            content="This event has been cancelled"
+          />
+        );
+      } else if (!authenticated && !event.cancelled) {
+        eventCheck = (
+          <Button onClick={() => openModal("UnAuthModal")} color="teal">
+            JOIN THIS EVENT
+          </Button>
+        );
+      } else if (!authenticated && event.cancelled) {
+        eventCheck = (
+          <Label
+            size="large"
+            color="red"
+            content="This event has been cancelled"
+          />
+        );
+      }
 
       return (
         <Segment.Group key={event}>
@@ -110,17 +140,7 @@ const EventDetailedHeader = ({
                     Cancel My Place
                   </Button>
                 )}
-                {!isGoing && authenticated && (
-                  <Button onClick={() => goingToEvent(event)} color="teal">
-                    JOIN THIS EVENT
-                  </Button>
-                )}
-
-                {!authenticated && (
-                  <Button onClick={() => openModal("UnAuthModal")} color="teal">
-                    JOIN THIS EVENT
-                  </Button>
-                )}
+                {eventCheck}
               </React.Fragment>
             )}
             {uid === event.hostUid && (

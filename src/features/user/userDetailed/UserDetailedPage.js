@@ -8,7 +8,6 @@ import {
   Image,
   Item,
   List,
-  Menu,
   Segment,
   Tab,
 } from "semantic-ui-react";
@@ -18,6 +17,7 @@ import { firestoreConnect } from "react-redux-firebase";
 import LazyLoad from "react-lazyload";
 import Spinner from "../../Spinner/Spinner";
 import { getUserEvents } from "../../../redux/actions";
+import NotFound from "../../../app/layout/NotFound";
 
 const panes = [
   { menuItem: "All Events", pane: { key: "allEvents" } },
@@ -67,7 +67,7 @@ class UserDetailedPage extends Component {
       photos,
       auth,
       requesting,
-      events,
+      userEvents,
       eventsLoading,
     } = this.props;
     const loading = Object.values(requesting).some((req) => req === true);
@@ -202,8 +202,8 @@ class UserDetailedPage extends Component {
                 <br />
 
                 <Card.Group itemsPerRow={5}>
-                  {events &&
-                    events.map((event) => {
+                  {userEvents &&
+                    userEvents.map((event) => {
                       const eventDate = new Date(event.date.seconds * 1000);
 
                       return (
@@ -233,7 +233,7 @@ class UserDetailedPage extends Component {
         </React.Fragment>
       );
     } else {
-      return null;
+      return <NotFound />;
     }
   }
 }
@@ -249,8 +249,9 @@ const mapStateToProps = (state) => {
     photos: state.firestore.ordered.photos,
     auth: state.firebase.auth,
     requesting: state.firestore.status.requesting,
-    events: state.eventsReducer.events,
+
     eventsLoading: state.eventsReducer.loading,
+    userEvents: state.eventsReducer.userEvents,
   };
 };
 export default withRouter(

@@ -1,7 +1,6 @@
 import {
   CREATE_EVENT,
   UPDATE_EVENT,
-  DELETE_EVENT,
   VIEW_SELECTED_EVENT,
   ON_CANCEL_CLICK,
   CREATE_EVENT_BUTTON,
@@ -11,6 +10,7 @@ import {
   LOADING_START,
   LOADING_STOP,
   FETCH_EVENTS,
+  FETCH_USER_EVENTS,
 } from "./utils/ActionConstants";
 
 const INITIAL_STATE = {
@@ -18,6 +18,7 @@ const INITIAL_STATE = {
   isOpen: false,
   selectedEvent: null,
   loading: false,
+  userEvents: [],
 };
 
 export default (state = INITIAL_STATE, action) => {
@@ -37,11 +38,6 @@ export default (state = INITIAL_STATE, action) => {
         }
       });
       return { ...state, events: result };
-    case DELETE_EVENT:
-      const newEvents = state.events.filter(
-        (event) => event.id !== action.payload
-      );
-      return { ...state, events: newEvents };
     case VIEW_SELECTED_EVENT:
       return { ...state, selectedEvent: action.payload, isOpen: true };
     case ON_CANCEL_CLICK:
@@ -60,6 +56,8 @@ export default (state = INITIAL_STATE, action) => {
       return { ...state, loading: false };
     case FETCH_EVENTS:
       return { ...state, events: action.payload };
+    case FETCH_USER_EVENTS:
+      return { ...state, userEvents: action.payload };
     default:
       return state;
   }

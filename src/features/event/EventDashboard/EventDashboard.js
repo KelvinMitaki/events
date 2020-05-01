@@ -1,7 +1,7 @@
-import React, { Component,createRef } from "react";
+import React, { Component, createRef } from "react";
 import EventList from "../EventList/EventList";
 
-import { Grid, Button, Loader } from "semantic-ui-react";
+import { Grid, Loader } from "semantic-ui-react";
 import { connect } from "react-redux";
 import {
   createEventButton,
@@ -12,7 +12,7 @@ import Spinner from "../../Spinner/Spinner";
 import { firestoreConnect } from "react-redux-firebase";
 
 export class EventDashboard extends Component {
-  createContextRef=createRef()
+  createContextRef = createRef();
   state = {
     moreEvents: false,
     initialLoading: true,
@@ -48,17 +48,21 @@ export class EventDashboard extends Component {
       <Grid>
         <Grid.Column width={10}>
           <div ref={this.createContextRef}>
-
-          <EventList
-            events={loadedEvents}
-            getNextEvents={this.getNextEvents}
-            loading={loading}
-            moreEvents={moreEvents}
-          />
+            <EventList
+              events={loadedEvents}
+              getNextEvents={this.getNextEvents}
+              loading={loading}
+              moreEvents={moreEvents}
+            />
           </div>
         </Grid.Column>
         <Grid.Column width={6}>
-          {activity && <EventActivity createContextRef={this.createContextRef} activities={activity} />}
+          {activity && (
+            <EventActivity
+              createContextRef={this.createContextRef}
+              activities={activity}
+            />
+          )}
         </Grid.Column>
         <Grid.Column width={10}>
           <Loader active={loading} />

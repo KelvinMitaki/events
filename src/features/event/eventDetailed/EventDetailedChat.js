@@ -1,5 +1,5 @@
 import React from "react";
-import { Segment, Header, Comment, Form, Button } from "semantic-ui-react";
+import { Segment, Header, Comment } from "semantic-ui-react";
 import EventDetailedChatForm from "./EventDetailedChatForm";
 import { connect } from "react-redux";
 import { withRouter } from "react-router";

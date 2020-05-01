@@ -14,55 +14,68 @@ import { changeOpenState } from "../../redux/actions";
 import { connect } from "react-redux";
 import ModalManager from "../../features/modals/ModalManager";
 import { UserIsAuthenticated } from "../../features/auth/authWrapper/authWrapper";
+import NotFound from "./NotFound";
+import Spinner from "../../features/Spinner/Spinner";
 
 export class App extends Component {
   componentDidMount() {
     this.props.changeOpenState();
   }
   render() {
+    const { auth } = this.props;
+    if (!auth.isLoaded) return <Spinner />;
     return (
       <React.Fragment>
         <ModalManager />
         <Route exact path="/" component={HomePage} />
-        <Route
-          path="/(.+)"
-          render={() => (
-            <React.Fragment>
-              <NavBar />
-              <Container className="overlap">
-                <Switch key={this.props.location.key}>
-                  <Route exact path="/events" component={EventDashboard} />
-                  <Route
-                    exact
-                    path="/events/:id"
-                    render={() => <EventDetailedPage />}
-                  />
-                  <Route
-                    exact
-                    path="/people"
-                    component={UserIsAuthenticated(PeopleDashboard)}
-                  />
-                  <Route
-                    exact
-                    path="/profile/:id"
-                    component={UserIsAuthenticated(UserDetailedPage)}
-                  />
-                  <Route
-                    path="/settings"
-                    component={UserIsAuthenticated(SettingsDashboard)}
-                  />
-                  <Route
-                    path={["/createEvent", "/manage/:id"]}
-                    component={UserIsAuthenticated(EventForm)}
-                  />
-                </Switch>
-              </Container>
-            </React.Fragment>
-          )}
-        />
+        {auth.isLoaded && (
+          <Route
+            path="/(.+)"
+            render={() => (
+              <React.Fragment>
+                <NavBar />
+                <Container className="overlap">
+                  <Switch key={this.props.location.key}>
+                    <Route exact path="/events" component={EventDashboard} />
+                    <Route
+                      exact
+                      path="/events/:id"
+                      render={() => <EventDetailedPage />}
+                    />
+                    <Route
+                      exact
+                      path="/people"
+                      component={UserIsAuthenticated(PeopleDashboard)}
+                    />
+                    <Route
+                      exact
+                      path="/profile/:id"
+                      component={UserIsAuthenticated(UserDetailedPage)}
+                    />
+                    <Route
+                      path="/settings"
+                      component={UserIsAuthenticated(SettingsDashboard)}
+                    />
+                    <Route
+                      path={["/createEvent", "/manage/:id"]}
+                      component={UserIsAuthenticated(EventForm)}
+                    />
+                    <Route component={NotFound} />
+                  </Switch>
+                </Container>
+              </React.Fragment>
+            )}
+          />
+        )}
       </React.Fragment>
     );
   }
 }
 
-export default withRouter(connect(null, { changeOpenState })(App));
+const mapStateToProps = (state) => {
+  return {
+    auth: state.firebase.auth,
+  };
+};
+
+export default withRouter(connect(mapStateToProps, { changeOpenState })(App));

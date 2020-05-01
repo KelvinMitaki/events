@@ -6,7 +6,7 @@ import { logInUser } from "../../../redux/actions";
 import { connect } from "react-redux";
 import SocialLogin from "../SocialLogin/SocialLogin";
 
-const LoginForm = ({ handleSubmit, logInUser, error }) => {
+const LoginForm = ({ handleSubmit, logInUser, error, loading }) => {
   const onFormSubmit = (formValues) => {
     return logInUser(formValues);
   };
@@ -32,7 +32,7 @@ const LoginForm = ({ handleSubmit, logInUser, error }) => {
           type="password"
           placeholder="password"
         />
-        <Button fluid size="large" color="teal">
+        <Button loading={loading} fluid size="large" color="teal">
           Login
         </Button>{" "}
         <Divider horizontal>OR</Divider>
@@ -43,4 +43,10 @@ const LoginForm = ({ handleSubmit, logInUser, error }) => {
 };
 const wrappedComponent = reduxForm({ form: "LoginForm" })(LoginForm);
 
-export default connect(null, { logInUser })(wrappedComponent);
+const mapStateToProps = (state) => {
+  return {
+    loading: state.eventsReducer.loading,
+  };
+};
+
+export default connect(mapStateToProps, { logInUser })(wrappedComponent);

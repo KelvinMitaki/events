@@ -3,11 +3,7 @@ import { Menu, Container, Button } from "semantic-ui-react";
 import { NavLink, Link, withRouter } from "react-router-dom";
 import SignedInMenu from "../menus/SignedInMenu";
 import SignedOutMenu from "../menus/SignedOutMenu";
-import {
-  createEventNavbar,
-  openModal,
-  logOutUser,
-} from "../../../redux/actions";
+import { createEventNavbar, openModal } from "../../../redux/actions";
 import { connect } from "react-redux";
 import { withFirebase } from "react-redux-firebase";
 
@@ -75,8 +71,6 @@ const mapStateToProps = (state) => {
 };
 export default withRouter(
   withFirebase(
-    connect(mapStateToProps, { createEventNavbar, openModal, logOutUser })(
-      NavBar
-    )
+    connect(mapStateToProps, { createEventNavbar, openModal })(NavBar)
   )
 );

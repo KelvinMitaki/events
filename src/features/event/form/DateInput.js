@@ -9,6 +9,14 @@ const DateInput = ({
   meta: { error, touched },
   ...props
 }) => {
+  let date;
+  if (Object.prototype.toString.call(value) === "[object String]") {
+    date = Object.prototype.toString.call(new Date(value));
+  } else if (Object.prototype.toString.call(value) === "[object Date]") {
+    date = Object.prototype.toString.call(value);
+  } else {
+    date = value;
+  }
   return (
     <Form.Field error={!!error && touched}>
       <ReactDatePicker
@@ -16,7 +24,7 @@ const DateInput = ({
         placeholderText={placeholder}
         selected={
           value
-            ? Object.prototype.toString.call(value) !== "[object Date]"
+            ? date !== "[object Date]"
               ? value.toDate()
               : new Date(value)
             : null

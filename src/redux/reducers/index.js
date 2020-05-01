@@ -1,6 +1,5 @@
 import EventsReducer from "./EventsReducer";
 import modalsReducer from "./modalsReducer";
-import authReducer from "./authReducer";
 import storage from "redux-persist/lib/storage";
 
 import { reducer as formReducer } from "redux-form";
@@ -19,7 +18,6 @@ const reducers = combineReducers({
   eventsReducer: EventsReducer,
   form: formReducer,
   modals: modalsReducer,
-  auth: authReducer,
   toastr: toastrReducer,
   firebase: firebaseReducer,
   firestore: firestoreReducer,
