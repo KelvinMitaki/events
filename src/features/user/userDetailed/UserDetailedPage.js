@@ -231,10 +231,14 @@ class UserDetailedPage extends Component {
                 />
                 <br />
 
-                <Card.Group itemsPerRow={5}>
+                <Card.Group stackable itemsPerRow={5}>
                   {userEvents &&
                     userEvents.map((event) => {
-                      const eventDate = new Date(event.date.seconds * 1000);
+                      console.log(event);
+                      let eventDate;
+                      if (event && event.date) {
+                        eventDate = new Date(event.date.seconds * 1000);
+                      }
 
                       return (
                         <Card

@@ -70,9 +70,9 @@ const PhotosPage = ({
     await updateProfilePhoto(photo);
   };
   return (
-    <Segment>
+    <Segment stacked>
       <Header dividing size="large" content="Your Photos" />
-      <Grid>
+      <Grid stackable>
         <Grid.Row />
         <Grid.Column width={4}>
           <Header color="teal" sub content="Step 1 - Add Photo" />
