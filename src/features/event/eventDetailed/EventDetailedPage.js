@@ -18,7 +18,7 @@ const EventDetailedPage = ({ requesting, auth, ordered }) => {
   if (ordered.singleEvent && ordered.singleEvent.length === 0)
     return <NotFound />;
   return (
-    <Grid>
+    <Grid stackable>
       <Grid.Column width={10}>
         <EventDetailedHeader authenticated={authenticated} />
         <EventDetailedInfo />

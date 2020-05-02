@@ -15,7 +15,7 @@ import {
 import { toastr } from "react-redux-toastr";
 import { SubmissionError, reset } from "redux-form";
 import cuid from "cuid";
-import firebase from "../../app/config/firebase";
+import firebase, { firestore } from "../../app/config/firebase";
 
 //EVENTS
 
@@ -62,6 +62,7 @@ export const createEvent = (event) => async (
     getState().firebase.profile.photoURL ||
     getState().firebase.profile.avatarUrl;
   const newEvent = createNewEvent(user, photoURL, event);
+
   dispatch(loadingStart());
   try {
     const createdEvent = await firestore.add("events", newEvent);
@@ -560,5 +561,77 @@ export const addEventComment = (eventId, formValues, parentId) => async (
     console.log(error);
     dispatch(loadingStop());
     toastr.error("Oops", "Problem adding comment");
+  }
+};
+
+//DISPLAY_NAME
+//PHOTO_URL
+//CITY
+//LINK TO FULL PROFILE
+//FOLLOWING AND UNFOLLOWING
+export const followUser = (userToBeFollowed) => async (
+  dispatch,
+  getState,
+  { getFirestore, getFirebase }
+) => {
+  // const firestore = getFirestore();
+  const firebase = getFirebase();
+  const user = firebase.auth().currentUser;
+  try {
+    //ADDING FOLLOWING DOCUMENT TO SHOW THE USERS YOU ARE FOLLOWING
+    const followUserRef = firestore.doc(
+      `users/${user.uid}/following/${userToBeFollowed.id}`
+    );
+    await followUserRef.set({
+      displayName: userToBeFollowed.displayName,
+      photoURL:
+        userToBeFollowed.photoURL ||
+        userToBeFollowed.avatarUrl ||
+        "/assets/user.png",
+      city: userToBeFollowed.city || "unknown",
+    });
+    //ADDING FOLLOWERS DOCUMENT TO SHOW YOUR CURRENT FOLLOWERS
+    const userToBeFollowedRef = firestore.doc(
+      `users/${userToBeFollowed.id}/followers/${user.uid}`
+    );
+
+    userToBeFollowedRef.set({
+      displayName: user.displayName,
+      photoURL: user.photoURL || user.avatarUrl || "/assets/user.png",
+      city: user.city || "unknown",
+    });
+
+    toastr.success("Success!", "Followed user successfully");
+  } catch (error) {
+    console.log(error);
+    toastr.error("Oops!!!", "Error following user");
+  }
+};
+
+export const unFollowUser = (followedUser) => async (
+  dispatch,
+  getState,
+  { getFirestore, getFirebase }
+) => {
+  const firestore = getFirestore();
+  const firebase = getFirebase();
+  const user = firebase.auth().currentUser;
+  try {
+    await firestore.delete({
+      collection: "users",
+      doc: user.uid,
+      subcollections: [{ collection: "following", doc: followedUser.id }],
+    });
+
+    await firestore.delete({
+      collection: "users",
+      doc: followedUser.id,
+      subcollections: [{ collection: "followers", doc: user.uid }],
+    });
+
+    toastr.success("Success!", "You have successfully unfollowed the user");
+  } catch (error) {
+    console.log(error);
+    toastr.error("Oops", "Something went wrong when unfollowing the user");
   }
 };

@@ -17,13 +17,14 @@ export class NavBar extends Component {
   render() {
     const { createEventNavbar, displayName, photoURL, avatarUrl } = this.props;
     return (
-      <Menu inverted fixed="top">
+      <Menu stackable inverted fixed="top">
         <Container>
-          <Menu.Item as={NavLink} to="/" exact header>
+          {/* <Menu.Item as={NavLink} to="/" exact header>
             <img src="/assets/logo.png" alt="logo" />
             events
-          </Menu.Item>
+          </Menu.Item> */}
           <Menu.Item as={NavLink} to="/events" exact name="Events" />
+          <Menu.Item as={NavLink} to="/activity" exact name="Activity" />
           {this.props.authenticated.isLoaded &&
             !this.props.authenticated.isEmpty && (
               <React.Fragment>

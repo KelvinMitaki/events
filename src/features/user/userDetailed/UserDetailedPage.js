@@ -16,7 +16,11 @@ import { Link, withRouter } from "react-router-dom";
 import { firestoreConnect } from "react-redux-firebase";
 import LazyLoad from "react-lazyload";
 import Spinner from "../../Spinner/Spinner";
-import { getUserEvents } from "../../../redux/actions";
+import {
+  getUserEvents,
+  followUser,
+  unFollowUser,
+} from "../../../redux/actions";
 import NotFound from "../../../app/layout/NotFound";
 
 const panes = [
@@ -69,6 +73,9 @@ class UserDetailedPage extends Component {
       requesting,
       userEvents,
       eventsLoading,
+      followUser,
+      following,
+      unFollowUser,
     } = this.props;
     const loading = Object.values(requesting).some((req) => req === true);
     if (loading) return <Spinner />;
@@ -77,10 +84,46 @@ class UserDetailedPage extends Component {
         new Date().getTime() - Date.parse(user.dateOfBirth);
       const years = Math.floor(currentmilliSeconds / 31536000000);
       const joined = user.createdAt.toDate();
+      const checkFollowing = following.find(
+        (follower) => follower.id === this.props.match.params.id
+      );
+      let button;
+      if (auth.uid === user.id) {
+        button = (
+          <Button
+            color="teal"
+            fluid
+            basic
+            as={Link}
+            to="/settings"
+            content="Edit Profile"
+          />
+        );
+      } else if (!checkFollowing) {
+        button = (
+          <Button
+            onClick={async () => await followUser(user)}
+            color="teal"
+            fluid
+            basic
+            content="Follow"
+          />
+        );
+      } else {
+        button = (
+          <Button
+            onClick={async () => await unFollowUser(user)}
+            color="red"
+            fluid
+            basic
+            content="unfollow"
+          />
+        );
+      }
 
       return (
         <React.Fragment>
-          <Grid>
+          <Grid stackable>
             <Grid.Column width={16}>
               <Segment>
                 <Item.Group>
@@ -154,20 +197,7 @@ class UserDetailedPage extends Component {
               </Segment>
             </Grid.Column>
             <Grid.Column width={4}>
-              <Segment>
-                {auth.uid === user.id ? (
-                  <Button
-                    color="teal"
-                    fluid
-                    basic
-                    as={Link}
-                    to="/settings"
-                    content="Edit Profile"
-                  />
-                ) : (
-                  <Button color="teal" fluid basic content="Follow" />
-                )}
-              </Segment>
+              <Segment>{button}</Segment>
             </Grid.Column>
             <Grid.Column width={12}>
               <Segment attached>
@@ -249,14 +279,14 @@ const mapStateToProps = (state) => {
     photos: state.firestore.ordered.photos,
     auth: state.firebase.auth,
     requesting: state.firestore.status.requesting,
-
+    following: state.firestore.ordered.following,
     eventsLoading: state.eventsReducer.loading,
     userEvents: state.eventsReducer.userEvents,
   };
 };
 export default withRouter(
-  connect(mapStateToProps, { getUserEvents })(
-    firestoreConnect(({ match }) => {
+  connect(mapStateToProps, { getUserEvents, followUser, unFollowUser })(
+    firestoreConnect(({ match, auth }) => {
       return [
         {
           collection: "users",
@@ -267,6 +297,18 @@ export default withRouter(
           doc: match.params.id,
           subcollections: [{ collection: "photos" }],
           storeAs: "photos",
+        },
+        {
+          collection: "users",
+          doc: auth.uid,
+          subcollections: [{ collection: "followers" }],
+          storeAs: "followers",
+        },
+        {
+          collection: "users",
+          doc: auth.uid,
+          subcollections: [{ collection: "following" }],
+          storeAs: "following",
         },
       ];
     })(UserDetailedPage)

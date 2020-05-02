@@ -11,7 +11,7 @@ import PhotosPage from "./photos/PhotosPage";
 
 const SettingsDashboard = ({ user, auth }) => {
   return (
-    <Grid>
+    <Grid stackable>
       <Grid.Column width={12}>
         <Switch>
           <Redirect from="/settings" to="/settings/basics" exact />

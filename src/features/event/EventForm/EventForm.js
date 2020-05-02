@@ -77,9 +77,9 @@ export class EventForm extends Component {
     } = this.props;
     if (event) {
       return (
-        <Grid>
+        <Grid stackable>
           <Grid.Column width={14}>
-            <Segment>
+            <Segment clearing>
               <Header sub color="teal" content="Event Details" />
               <Form onSubmit={this.props.handleSubmit(this.onSubmit)}>
                 <Field

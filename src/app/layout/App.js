@@ -16,6 +16,7 @@ import ModalManager from "../../features/modals/ModalManager";
 import { UserIsAuthenticated } from "../../features/auth/authWrapper/authWrapper";
 import NotFound from "./NotFound";
 import Spinner from "../../features/Spinner/Spinner";
+import Activity from "../../features/event/activity/Activity";
 
 export class App extends Component {
   componentDidMount() {
@@ -46,6 +47,11 @@ export class App extends Component {
                       exact
                       path="/people"
                       component={UserIsAuthenticated(PeopleDashboard)}
+                    />
+                    <Route
+                      exact
+                      path="/activity"
+                      component={UserIsAuthenticated(Activity)}
                     />
                     <Route
                       exact

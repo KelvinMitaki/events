@@ -7,9 +7,6 @@ import {
   createEventButton,
   getEventsForDashboard,
 } from "../../../redux/actions";
-import EventActivity from "../EventActivity/EventActivity";
-import Spinner from "../../Spinner/Spinner";
-import { firestoreConnect } from "react-redux-firebase";
 
 export class EventDashboard extends Component {
   createContextRef = createRef();
@@ -40,13 +37,12 @@ export class EventDashboard extends Component {
     }
   };
   render() {
-    const { loading, activity } = this.props;
+    const { loading } = this.props;
 
     const { loadedEvents, moreEvents } = this.state;
-    if (this.state.initialLoading) return <Spinner />;
     return (
-      <Grid>
-        <Grid.Column width={10}>
+      <Grid stackable>
+        <Grid.Column width={15}>
           <div ref={this.createContextRef}>
             <EventList
               events={loadedEvents}
@@ -56,15 +52,8 @@ export class EventDashboard extends Component {
             />
           </div>
         </Grid.Column>
-        <Grid.Column width={6}>
-          {activity && (
-            <EventActivity
-              createContextRef={this.createContextRef}
-              activities={activity}
-            />
-          )}
-        </Grid.Column>
-        <Grid.Column width={10}>
+
+        <Grid.Column width={15}>
           <Loader active={loading} />
         </Grid.Column>
       </Grid>
@@ -75,14 +64,9 @@ const mapStateToProps = (state) => {
   return {
     loading: state.eventsReducer.loading,
     events: state.eventsReducer.events,
-    activity: state.firestore.ordered.activity,
   };
 };
 export default connect(mapStateToProps, {
   createEventButton,
   getEventsForDashboard,
-})(
-  firestoreConnect([
-    { collection: "activity", orderBy: ["timestamp", "desc"], limit: 5 },
-  ])(EventDashboard)
-);
+})(EventDashboard);

@@ -19,9 +19,12 @@ const SignedInMenu = ({
       />
       <Dropdown pointing="top left" text={displayName}>
         <Dropdown.Menu>
-          <Dropdown.Item text="Create Event" icon="plus" />
-          <Dropdown.Item text="My Events" icon="calendar" />
-          <Dropdown.Item text="My Network" icon="users" />
+          <Dropdown.Item
+            text="Create Event"
+            as={Link}
+            to="/createEvent"
+            icon="plus"
+          />
           <Dropdown.Item
             as={Link}
             to={`/profile/${uid}`}
